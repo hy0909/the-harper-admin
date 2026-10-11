@@ -66,7 +66,7 @@ App.screens.home = {
           h('h2', { class: 'pv-feed-title' }, ...br(item.title || '제목')),
           h('div', { class: 'pv-photo pv-photo--card' }, img, h('div', { class: 'pv-shade pv-shade--top' }),
             h('div', { class: 'pv-top' },
-              h('div', { class: 'pv-price-row' }, h('p', { class: 'pv-price' }, esc(item.price)), item.badge ? h('span', { class: 'pv-badge' }, esc(item.badge)) : null),
+              h('div', { class: 'pv-price-row' }, h('p', { class: 'pv-price' }, esc(item.price))),
               editor))));
       } else {
         inner.append(h('div', { class: 'pv-pick' },
@@ -145,7 +145,7 @@ App.screens.home = {
         h('button', { class: 'btn small', type: 'button', onclick: () => { tours.items.push({ tier: '', title: '', price: '', open: false }); markDirty('content'); drawTours(); } }, '+ 투어 추가')),
       h('div', { class: 'grid2' },
         fieldText('섹션 제목', tours, 'title', { placeholder: '투어 종류' }),
-        fieldText('준비 중 표시 글자', tours, 'soonLabel', { placeholder: '추후 확장' })),
+        fieldText('준비 중 표시 글자', tours, 'soonLabel', { placeholder: '오픈 예정' })),
       tourList));
 
     // 3. 에디터 큐레이션 피드
@@ -164,9 +164,7 @@ App.screens.home = {
               self.colorPicker(it, redraw),
               fieldText('제목', it, 'title', { required: true, textarea: true, rows: 2, placeholder: '셀럽이 입어서\n유명한 브랜드', onChange: redraw }),
               fieldImage('사진', it, 'image', { required: true, slug: () => 'feed-' + slugify(it.title), onChange: redraw }),
-              h('div', { class: 'grid2' },
-                fieldText('가격', it, 'price', { placeholder: '128,000원~', onChange: redraw }),
-                fieldText('배지', it, 'badge', { placeholder: 'Day Drop', onChange: redraw })),
+              fieldText('가격', it, 'price', { placeholder: '128,000원~', onChange: redraw }),
               h('div', { class: 'grid2' },
                 fieldEditor('에디터', it, 'editor', content, { onChange: redraw }),
                 fieldText('누르면 가는 곳', it, 'link', { placeholder: 'magazine.html' }))),
@@ -176,7 +174,7 @@ App.screens.home = {
     drawFeed();
     root.append(h('div', { class: 'card' },
       h('div', { class: 'card-head' }, h('h2', null, '에디터 큐레이션 피드'),
-        h('button', { class: 'btn small', type: 'button', onclick: () => { feed.items.push({ color: 'blush', title: '', image: '', price: '', badge: '', editor: (content.editors[0] || {}).id || '', link: '' }); markDirty('content'); drawFeed(); } }, '+ 카드 추가')),
+        h('button', { class: 'btn small', type: 'button', onclick: () => { feed.items.push({ color: 'blush', title: '', image: '', price: '', editor: (content.editors[0] || {}).id || '', link: '' }); markDirty('content'); drawFeed(); } }, '+ 카드 추가')),
       fieldText('섹션 제목', feed, 'title', { placeholder: '에디터 큐레이션 피드' }),
       feedList));
 
