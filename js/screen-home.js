@@ -47,26 +47,41 @@ App.screens.home = {
     return errors;
   },
 
-  // 미리보기 카드
+  // 미리보기 카드: 앱과 같은 구조·크기(440px)로 그린 뒤 절반으로 줄여 보여 준다
   preview(item, content, kind) {
-    const ed = (content.editors || []).find((e) => e.id === item.editor);
-    const el = h('div', { class: 'pv ' + (kind === 'pick' ? 'pick' : 'c-' + (item.color || 'blush')) });
+    const box = h('div', { class: 'pv-box' });
+    const inner = h('div', { class: 'pv-scale' });
+    const esc = (v) => String(v == null ? '' : v);
+    const br = (v) => esc(v).split('\n').map((t, i) => (i ? [h('br'), t] : t)).flat();
     const draw = () => {
-      el.className = 'pv ' + (kind === 'pick' ? 'pick' : 'c-' + (item.color || 'blush'));
-      el.innerHTML = '';
-      const edNow = (content.editors || []).find((e) => e.id === item.editor);
-      el.append(
-        h('div', { class: 'pv-img', style: item.image ? `background-image:url("${imageUrl(item.image)}")` : '' }),
-        h('div', { class: 'pv-body' },
-          kind === 'feed' && item.badge ? h('span', { class: 'pv-badge' }, item.badge) : null,
-          h('div', { class: 'pv-title' }, item.title || '제목'),
-          h('div', { class: 'pv-price' }, item.price || ''),
-          kind === 'pick' && item.note ? h('div', { class: 'pv-note' }, item.note) : null,
-          edNow ? h('div', { class: 'pv-ed' }, h('span', { class: 'av', style: edNow.avatar ? `background-image:url("${imageUrl(edNow.avatar)}")` : '' }), edNow.name) : null));
+      inner.innerHTML = '';
+      const ed = (content.editors || []).find((e) => e.id === item.editor);
+      const avatar = ed && ed.avatar
+        ? h('img', { class: 'pv-av', src: imageUrl(ed.avatar), alt: '' })
+        : h('span', { class: 'pv-av' });
+      const editor = h('div', { class: 'pv-ed' }, avatar, h('span', { class: 'pv-ed-name' }, ed ? ed.name : ''));
+      const img = item.image ? h('img', { class: 'pv-img', src: imageUrl(item.image), alt: '' }) : h('div', { class: 'pv-img pv-img--empty' });
+      if (kind === 'feed') {
+        inner.append(h('div', { class: 'pv-feed pv-feed--' + (item.color || 'blush') },
+          h('h2', { class: 'pv-feed-title' }, ...br(item.title || '제목')),
+          h('div', { class: 'pv-photo pv-photo--card' }, img, h('div', { class: 'pv-shade pv-shade--top' }),
+            h('div', { class: 'pv-top' },
+              h('div', { class: 'pv-price-row' }, h('p', { class: 'pv-price' }, esc(item.price)), item.badge ? h('span', { class: 'pv-badge' }, esc(item.badge)) : null),
+              editor))));
+      } else {
+        inner.append(h('div', { class: 'pv-pick' },
+          h('div', { class: 'pv-photo pv-photo--pick' }, img, h('div', { class: 'pv-shade' }), editor),
+          h('div', { class: 'pv-pick-text' },
+            h('h2', { class: 'pv-pick-title' }, esc(item.title || '제목')),
+            h('div', { class: 'pv-pick-price' }, h('span', { class: 'pv-pick-value' }, esc(item.price)), item.note ? h('span', { class: 'pv-pick-note' }, esc(item.note)) : null))));
+      }
+      // 줄인 만큼 바깥 상자 높이를 맞춘다
+      requestAnimationFrame(() => { box.style.height = Math.round(inner.offsetHeight / 2) + 'px'; });
     };
     draw();
-    el.redraw = draw;
-    return h('div', { class: 'preview-wrap' }, el, h('span', { class: 'cap' }, '미리보기'));
+    box.append(inner);
+    box.redraw = draw;
+    return h('div', { class: 'preview-wrap' }, box, h('span', { class: 'cap' }, '앱 미리보기 (절반 크기)'));
   },
 
   colorPicker(item, onChange) {
