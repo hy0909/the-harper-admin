@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>THE HARPER 관리자</title>
+<meta name="robots" content="noindex">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+<!-- 로그인 -->
+<section id="login" class="login hidden">
+  <div class="login-card">
+    <div class="brand">THE HARPER <span>관리자</span></div>
+    <p class="muted">앱 내용을 고치려면 GitHub 토큰이 필요합니다. 토큰은 이 브라우저에만 저장되고 다른 곳으로 보내지 않습니다.</p>
+    <form id="login-form" autocomplete="off">
+      <label class="field">
+        <span class="label">GitHub 토큰</span>
+        <input id="login-token" type="password" placeholder="github_pat_…" required spellcheck="false" autocapitalize="off">
+      </label>
+      <p id="login-error" class="error hidden" role="alert"></p>
+      <button id="login-btn" class="btn primary wide" type="submit">로그인</button>
+    </form>
+    <details class="help">
+      <summary>토큰 만드는 법</summary>
+      <ol>
+        <li>github.com에 로그인한 뒤 오른쪽 위 프로필 → <b>Settings</b></li>
+        <li>왼쪽 맨 아래 <b>Developer settings</b> → <b>Personal access tokens</b> → <b>Fine-grained tokens</b></li>
+        <li><b>Generate new token</b> 클릭. 이름은 아무거나(예: harper-admin), 만료일은 넉넉하게</li>
+        <li><b>Repository access</b>에서 <b>Only select repositories</b> → <b>the-harper-app</b> 선택</li>
+        <li><b>Permissions</b> → <b>Repository permissions</b> → <b>Contents</b>를 <b>Read and write</b>로</li>
+        <li>맨 아래 <b>Generate token</b>. 나온 문자열(github_pat_로 시작)을 위 칸에 붙여넣기</li>
+      </ol>
+      <p class="muted small">토큰은 한 번만 보여주니 안전한 곳에 보관하세요. 잃어버리면 새로 만들면 됩니다.</p>
+    </details>
+  </div>
+</section>
+
+<!-- 앱 -->
+<div id="app" class="app hidden">
+  <aside class="side">
+    <div class="side-top">
+      <div class="brand small">THE HARPER <span>관리자</span></div>
+      <a class="muted small ext" href="https://hy0909.github.io/the-harper-app/" target="_blank" rel="noopener">앱에서 보기 ↗</a>
+    </div>
+    <nav class="tabs" id="tabs">
+      <button class="tab" data-tab="editors">에디터<i class="dot" data-dirty="content"></i></button>
+      <button class="tab" data-tab="home">메인 화면<i class="dot" data-dirty="content"></i></button>
+      <button class="tab" data-tab="shops">지도 샵<i class="dot" data-dirty="shops"></i></button>
+    </nav>
+    <div class="side-bottom">
+      <div class="user">
+        <img id="user-avatar" alt="" width="28" height="28">
+        <span id="user-login" class="small"></span>
+      </div>
+      <button id="logout" class="btn ghost small">로그아웃</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div id="screen" class="screen"></div>
+  </main>
+</div>
+
+<div id="toast" class="toast hidden"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="js/util.js"></script>
+<script src="js/github.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/admin.js"></script>
+<script src="js/screen-editors.js"></script>
+<script src="js/screen-home.js"></script>
+<script src="js/screen-shops.js"></script>
+</body>
+</html>
