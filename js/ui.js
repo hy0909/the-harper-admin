@@ -1,6 +1,6 @@
 /* 입력 필드 도우미. 값이 바뀌면 obj[key]에 바로 쓰고, 해당 파일을 '수정됨'으로 표시 */
 const UI = {
-  file: 'content', // 현재 그리는 화면이 다루는 파일 (content | shops)
+  file: 'content', // 현재 그리는 화면이 다루는 데이터 묶음 (content | shops)
   previewCache: {}, // 방금 올린 이미지의 미리보기 URL
 };
 
@@ -67,8 +67,7 @@ function fieldEditor(label, obj, key, content, opt = {}) {
 function imageUrl(path) {
   if (!path) return '';
   if (UI.previewCache[path]) return UI.previewCache[path];
-  if (/^(https?:)?\/\//.test(path) || path.startsWith('data:')) return path;
-  return GH.rawUrl(path) + '?v=' + App.loadedAt;
+  return DB.imageUrl(path);
 }
 
 // 캔버스로 줄이기: 긴 변 1600px, JPEG 0.85 (PNG는 PNG 유지)
@@ -100,17 +99,16 @@ async function uploadImage(file, slugHint) {
   const { blob, ext } = await shrinkImage(file);
   const origName = file.name.replace(/\.[^.]+$/, '');
   const slug = slugify(slugHint) !== 'item' ? slugify(slugHint) : slugify(origName);
-  const path = `assets/uploads/${todayStamp()}-${slug}.${ext}`;
-  const bytes = new Uint8Array(await blob.arrayBuffer());
-  const saved = await GH.putNewBytes(path, bytes, `관리자: 이미지 업로드 ${path}`);
-  UI.previewCache[saved] = URL.createObjectURL(blob);
-  return saved;
+  const path = `uploads/${todayStamp()}-${slug}.${ext}`;
+  const url = await DB.uploadImage(path, blob, ext === 'png' ? 'image/png' : 'image/jpeg');
+  UI.previewCache[url] = URL.createObjectURL(blob);
+  return url;
 }
 
 function fieldImage(label, obj, key, opt = {}) {
   const file = UI.file;
   const thumb = h('div', { class: 'thumb' + (opt.round ? ' round' : '') });
-  const pathInput = h('input', { type: 'text', value: obj[key] ?? '', placeholder: 'assets/photos/…', spellcheck: 'false',
+  const pathInput = h('input', { type: 'text', value: obj[key] ?? '', placeholder: 'https://… 또는 assets/photos/…', spellcheck: 'false',
     oninput: (e) => { obj[key] = e.target.value.trim(); markDirty(file); refresh(); opt.onChange && opt.onChange(obj[key]); } });
   const prog = h('span', { class: 'prog' });
   const fileInput = h('input', { type: 'file', accept: 'image/*', class: 'hidden' });
@@ -139,7 +137,7 @@ function fieldImage(label, obj, key, opt = {}) {
       toast('이미지를 올렸습니다.', 'ok');
     } catch (e) {
       prog.textContent = '';
-      toast('업로드 실패: ' + GH.errorMessage(e), 'err');
+      toast('업로드 실패: ' + DB.errorMessage(e), 'err');
     } finally {
       btn.disabled = false;
       fileInput.value = '';
@@ -149,7 +147,7 @@ function fieldImage(label, obj, key, opt = {}) {
   return h('div', { class: 'field' }, labelEl(label, opt.required),
     h('div', { class: 'imgfield' }, thumb,
       h('div', { class: 'ctl' }, pathInput, h('div', { class: 'row' }, btn, fileInput, prog),
-        h('span', { class: 'hint' }, opt.hint || '파일을 올리면 assets/uploads/ 아래에 저장되고 경로가 자동으로 들어갑니다. 긴 변 1600px로 줄입니다.'))));
+        h('span', { class: 'hint' }, opt.hint || '파일을 올리면 사진 저장소(images/uploads)에 들어가고 주소가 자동으로 채워집니다. 긴 변 1600px로 줄입니다.'))));
 }
 
 // 화면 머리글 + 저장 버튼

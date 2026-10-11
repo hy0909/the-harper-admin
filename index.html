@@ -15,27 +15,20 @@
 <section id="login" class="login hidden">
   <div class="login-card">
     <div class="brand">THE HARPER <span>관리자</span></div>
-    <p class="muted">앱 내용을 고치려면 GitHub 토큰이 필요합니다. 토큰은 이 브라우저에만 저장되고 다른 곳으로 보내지 않습니다.</p>
-    <form id="login-form" autocomplete="off">
+    <p class="muted">앱 내용을 고치려면 로그인이 필요합니다.</p>
+    <form id="login-form">
       <label class="field">
-        <span class="label">GitHub 토큰</span>
-        <input id="login-token" type="password" placeholder="github_pat_…" required spellcheck="false" autocapitalize="off">
+        <span class="label">이메일</span>
+        <input id="login-email" type="email" placeholder="name@example.com" required autocomplete="username" spellcheck="false" autocapitalize="off">
+      </label>
+      <label class="field">
+        <span class="label">비밀번호</span>
+        <input id="login-password" type="password" placeholder="비밀번호" required autocomplete="current-password">
       </label>
       <p id="login-error" class="error hidden" role="alert"></p>
       <button id="login-btn" class="btn primary wide" type="submit">로그인</button>
     </form>
-    <details class="help">
-      <summary>토큰 만드는 법</summary>
-      <ol>
-        <li>github.com에 로그인한 뒤 오른쪽 위 프로필 → <b>Settings</b></li>
-        <li>왼쪽 맨 아래 <b>Developer settings</b> → <b>Personal access tokens</b> → <b>Fine-grained tokens</b></li>
-        <li><b>Generate new token</b> 클릭. 이름은 아무거나(예: harper-admin), 만료일은 넉넉하게</li>
-        <li><b>Repository access</b>에서 <b>Only select repositories</b> → <b>the-harper-app</b> 선택</li>
-        <li><b>Permissions</b> → <b>Repository permissions</b> → <b>Contents</b>를 <b>Read and write</b>로</li>
-        <li>맨 아래 <b>Generate token</b>. 나온 문자열(github_pat_로 시작)을 위 칸에 붙여넣기</li>
-      </ol>
-      <p class="muted small">토큰은 한 번만 보여주니 안전한 곳에 보관하세요. 잃어버리면 새로 만들면 됩니다.</p>
-    </details>
+    <p class="muted small login-hint">계정은 관리자가 Supabase에서 만들어 줍니다.</p>
   </div>
 </section>
 
@@ -52,8 +45,7 @@
       <button class="tab" data-tab="shops">지도 샵<i class="dot" data-dirty="shops"></i></button>
     </nav>
     <div class="side-bottom">
-      <div class="user">
-        <img id="user-avatar" alt="" width="28" height="28">
+      <div class="user" title="로그인한 계정">
         <span id="user-login" class="small"></span>
       </div>
       <button id="logout" class="btn ghost small">로그아웃</button>
@@ -68,8 +60,10 @@
 <div id="toast" class="toast hidden"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/config.js"></script>
 <script src="js/util.js"></script>
-<script src="js/github.js"></script>
+<script src="js/db.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/admin.js"></script>
 <script src="js/screen-editors.js"></script>

@@ -40,7 +40,7 @@ App.screens.editors = {
     const rerender = () => { root.innerHTML = ''; self.render(root); };
 
     root.append(screenHead('에디터', '큐레이션에 이름이 나가는 에디터 목록입니다. id는 한 번 만들면 바꿀 수 없습니다.', 'content',
-      () => App.save('content', () => self.validate(), '관리자: 에디터 수정')));
+      () => App.save('content', () => self.validate())));
     root.append(h('div', { id: 'errbox' }));
 
     if (!content.editors.length) root.append(h('div', { class: 'empty' }, '아직 에디터가 없습니다.'));

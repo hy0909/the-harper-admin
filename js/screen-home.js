@@ -90,7 +90,7 @@ App.screens.home = {
     const rerender = () => { const y = window.scrollY; root.innerHTML = ''; self.render(root); window.scrollTo(0, y); };
 
     root.append(screenHead('메인 화면', '앱을 열면 처음 보이는 화면입니다. 제목 칸에서 줄을 바꾸면 앱에서도 그대로 줄이 바뀝니다.', 'content',
-      () => App.save('content', () => self.validate(), '관리자: 메인 화면 수정')));
+      () => App.save('content', () => self.validate())));
     root.append(h('div', { id: 'errbox' }));
 
     // 1. 오늘의 추천

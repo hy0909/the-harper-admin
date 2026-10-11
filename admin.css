@@ -26,17 +26,14 @@ h3{font-size:15px;font-weight:600;margin:0}
 .brand{font-weight:800;letter-spacing:.04em;font-size:18px}
 .brand span{font-weight:500;color:var(--ink-60);letter-spacing:0;margin-left:6px}
 .brand.small{font-size:15px}
-.help{margin-top:20px;border-top:1px solid var(--line);padding-top:14px;font-size:14px}
-.help summary{cursor:pointer;font-weight:600;color:var(--cocoa)}
-.help ol{padding-left:20px;margin:10px 0 6px}
-.help li{margin:4px 0}
+.login-hint{margin:18px 0 0;border-top:1px solid var(--line);padding-top:14px}
 
 /* 공통 입력 */
 .field{display:block;margin:0 0 14px}
 .field .label{display:block;font-size:13px;font-weight:600;color:var(--ink-70);margin-bottom:6px}
 .field .label .req{color:var(--danger);margin-left:2px}
 .field .hint{display:block;font-size:12px;color:var(--ink-60);margin-top:4px}
-input[type=text],input[type=password],input[type=number],input[type=url],textarea,select{
+input[type=text],input[type=password],input[type=email],input[type=number],input[type=url],textarea,select{
   width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r-input);background:#fff;outline:none;transition:border-color .15s,box-shadow .15s}
 input:focus,textarea:focus,select:focus{border-color:var(--cocoa);box-shadow:0 0 0 3px rgba(111,74,58,.12)}
 input[readonly]{background:var(--page);color:var(--ink-60)}
@@ -81,7 +78,6 @@ select{appearance:none;-webkit-appearance:none;background-image:url("data:image/
 .tab .dot.on{display:block}
 .side-bottom{margin-top:auto;padding:14px 20px;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:8px}
 .user{display:flex;align-items:center;gap:8px;min-width:0}
-.user img{border-radius:50%;background:var(--line);flex:none}
 .user span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .main{min-width:0}
 .screen{max-width:960px;margin:0 auto;padding:28px 24px 120px}

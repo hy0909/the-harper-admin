@@ -4,12 +4,12 @@ const App = {
   tab: 'home',
   loadedAt: Date.now(),
   files: {
-    content: { path: 'data/content.json', data: null, sha: null, dirty: false, label: '메인 화면·에디터' },
-    shops:   { path: 'data/shops.json',   data: null, sha: null, dirty: false, label: '지도 샵' },
+    content: { data: null, saved: null, dirty: false, label: '메인 화면·에디터' },
+    shops:   { data: null, saved: null, dirty: false, label: '지도 샵' },
   },
   screens: {}, // 각 화면 모듈이 등록: { render(root), validate() }
 
-  async init() {
+  init() {
     $('#login-form').addEventListener('submit', (e) => { e.preventDefault(); this.login(); });
     $('#logout').addEventListener('click', () => this.logout());
     $$('#tabs .tab').forEach((b) => b.addEventListener('click', () => this.showTab(b.dataset.tab)));
@@ -20,63 +20,69 @@ const App = {
       const t = location.hash.slice(1);
       if (this.screens[t] && t !== this.tab && this.user) this.showTab(t, true);
     });
+    return this.start();
+  },
 
-    if (GH.token()) {
-      try {
-        const { user } = await GH.validate(GH.token());
-        this.enter(user);
-      } catch (e) {
-        GH.clearToken();
-        this.showLogin(GH.errorMessage(e));
-      }
-    } else {
-      this.showLogin();
+  // 설정 확인 → 저장된 세션이 있으면 바로 들어감
+  async start() {
+    let client;
+    try { client = DB.init(); } catch (e) { this.showLogin(e.message, true); return; }
+    if (!client) { this.showLogin('설정에 anon 키가 없습니다. js/config.js의 anonKey를 채워 주세요.', true); return; }
+    DB.onAuthChange((event) => {
+      if (event === 'SIGNED_OUT' && this.user) this.leave('로그아웃되었습니다. 다시 로그인해 주세요.');
+    });
+    try {
+      const user = await DB.currentUser();
+      if (user) this.enter(user); else this.showLogin();
+    } catch (e) {
+      this.showLogin(DB.errorMessage(e));
     }
   },
 
-  showLogin(msg) {
+  showLogin(msg, disabled) {
     $('#app').classList.add('hidden');
     $('#login').classList.remove('hidden');
     const err = $('#login-error');
     if (msg) { err.textContent = msg; err.classList.remove('hidden'); } else err.classList.add('hidden');
+    $$('#login-form input, #login-form button').forEach((el) => { el.disabled = !!disabled; });
   },
 
   async login() {
-    const input = $('#login-token');
-    const token = input.value.trim();
+    const email = $('#login-email').value.trim();
+    const password = $('#login-password').value;
     const btn = $('#login-btn'), err = $('#login-error');
     err.classList.add('hidden');
-    if (!token) return;
+    if (!email || !password) return;
     btn.disabled = true; btn.textContent = '확인 중…';
     try {
-      const { user, repo } = await GH.validate(token);
-      if (repo.permissions && repo.permissions.push === false) {
-        throw Object.assign(new Error('이 토큰은 읽기만 가능합니다. Contents: Read and write 권한이 필요합니다.'), { status: 403 });
-      }
-      GH.setToken(token);
-      input.value = '';
+      const user = await DB.signIn(email, password);
+      $('#login-password').value = '';
       this.enter(user);
     } catch (e) {
-      err.textContent = GH.errorMessage(e);
+      err.textContent = DB.errorMessage(e);
       err.classList.remove('hidden');
     } finally {
       btn.disabled = false; btn.textContent = '로그인';
     }
   },
 
-  logout() {
+  async logout() {
     if (Object.values(this.files).some((f) => f.dirty) && !confirm('저장하지 않은 내용이 있습니다. 그래도 로그아웃할까요?')) return;
-    GH.clearToken();
-    this.user = null;
-    for (const f of Object.values(this.files)) { f.data = null; f.sha = null; f.dirty = false; }
-    $('#screen').innerHTML = '';
-    this.showLogin();
+    await DB.signOut();
+    this.leave();
   },
 
-  async enter(user) {
+  // 화면 비우고 로그인 화면으로
+  leave(msg) {
+    this.user = null;
+    for (const f of Object.values(this.files)) { f.data = null; f.saved = null; f.dirty = false; }
+    $('#screen').innerHTML = '';
+    this.showLogin(msg);
+  },
+
+  enter(user) {
     this.user = user;
-    $('#user-login').textContent = user.login;
-    $('#user-avatar').src = user.avatar_url || '';
+    $('#user-login').textContent = user.email || '';
     $('#login').classList.add('hidden');
     $('#app').classList.remove('hidden');
     const t = location.hash.slice(1);
@@ -86,8 +92,8 @@ const App = {
   async load(file, force) {
     const f = this.files[file];
     if (f.data && !force) return f;
-    const { json, sha } = await GH.getJSON(f.path);
-    f.data = json; f.sha = sha; f.dirty = false;
+    const data = await DB.load(file);
+    f.data = data; f.saved = deepClone(data); f.dirty = false;
     this.loadedAt = Date.now();
     this.refreshStatus(file);
     return f;
@@ -129,14 +135,14 @@ const App = {
     } catch (e) {
       root.innerHTML = '';
       root.append(h('div', { class: 'empty' },
-        h('p', null, '불러오지 못했습니다: ' + GH.errorMessage(e)),
+        h('p', null, '불러오지 못했습니다: ' + DB.errorMessage(e)),
         h('button', { class: 'btn', onclick: () => this.showTab(tab, true) }, '다시 시도')));
-      if (e.status === 401) { GH.clearToken(); this.showLogin(GH.errorMessage(e)); }
+      if (DB.isAuthError(e)) { await DB.signOut(); this.leave(DB.errorMessage(e)); }
     }
   },
 
-  // 화면 하나의 파일 저장
-  async save(file, validate, message) {
+  // 화면 하나의 데이터 저장
+  async save(file, validate) {
     const f = this.files[file];
     const errors = validate ? validate() : [];
     const box = $('#errbox');
@@ -146,22 +152,18 @@ const App = {
     const btn = $(`[data-save="${file}"]`);
     if (btn) { btn.disabled = true; btn.textContent = '저장 중…'; }
     try {
-      const text = JSON.stringify(f.data, null, 2) + '\n';
-      f.sha = await GH.putText(f.path, text, message || `관리자: ${f.label} 수정`, f.sha);
+      await DB.save(file, f.data, f.saved);
+      f.saved = deepClone(f.data);
       f.dirty = false;
       this.loadedAt = Date.now();
-      this.refreshStatus(file, '저장됨 — 1~2분 뒤 앱에 반영');
-      toast('저장했습니다. 1~2분 뒤 앱에 반영됩니다.', 'ok');
+      this.refreshStatus(file, '저장됨 — 앱에 바로 반영돼요');
+      toast('저장했습니다. 앱에 바로 반영돼요.', 'ok');
       return true;
     } catch (e) {
-      if (e.status === 409 || e.status === 422) {
-        alert('다른 사람이 먼저 저장해서 이 화면의 내용을 다시 불러옵니다. 방금 고친 내용은 사라지니 다시 입력해 주세요.');
-        try { await this.load(file, true); } catch (_) {}
-        this.showTab(this.tab, true);
-      } else if (e.status === 401) {
-        GH.clearToken(); this.showLogin(GH.errorMessage(e));
+      if (DB.isAuthError(e)) {
+        await DB.signOut(); this.leave(DB.errorMessage(e));
       } else {
-        toast('저장 실패: ' + GH.errorMessage(e), 'err');
+        toast('저장 실패: ' + DB.errorMessage(e), 'err');
       }
       return false;
     } finally {

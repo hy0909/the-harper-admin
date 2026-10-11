@@ -23,26 +23,6 @@ function h(tag, attrs, ...children) {
   return el;
 }
 
-// UTF-8 안전한 base64
-function b64encode(str) {
-  const bytes = new TextEncoder().encode(str);
-  return bytesToB64(bytes);
-}
-function bytesToB64(bytes) {
-  let bin = '';
-  const CHUNK = 0x8000;
-  for (let i = 0; i < bytes.length; i += CHUNK) {
-    bin += String.fromCharCode.apply(null, bytes.subarray(i, i + CHUNK));
-  }
-  return btoa(bin);
-}
-function b64decode(b64) {
-  const bin = atob(String(b64).replace(/\s/g, ''));
-  const bytes = new Uint8Array(bin.length);
-  for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-  return new TextDecoder().decode(bytes);
-}
-
 function slugify(s) {
   return String(s || '')
     .normalize('NFKD')

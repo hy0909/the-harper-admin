@@ -6,11 +6,9 @@ App.screens.shops = {
   map: null,
   marker: null,
 
+  // 지역 선택지는 areas 테이블에서 온다
   areaOptions(data) {
-    const names = { seongsu: '성수', hannam: '한남' };
-    const keys = Object.keys(data.areas || {});
-    for (const k of ['seongsu', 'hannam']) if (!keys.includes(k)) keys.push(k);
-    return keys.map((k) => ({ value: k, label: (data.areas && data.areas[k] && (data.areas[k].name || data.areas[k].label)) || names[k] || k }));
+    return Object.keys(data.areas || {}).map((k) => ({ value: k, label: (data.areas[k] && data.areas[k].name) || k }));
   },
   areaName(data, key) {
     const o = this.areaOptions(data).find((a) => a.value === key);
@@ -39,15 +37,18 @@ App.screens.shops = {
     const rerender = () => { const y = window.scrollY; root.innerHTML = ''; self.render(root); window.scrollTo(0, y); };
 
     root.append(screenHead('지도 샵', '지도 화면에 나오는 매장 목록입니다. 목록에서 샵을 누르면 아래에 수정 칸이 열립니다.', 'shops',
-      () => App.save('shops', () => self.validate(), '관리자: 지도 샵 수정')));
+      () => App.save('shops', () => self.validate())));
     root.append(h('div', { id: 'errbox' }));
 
     // 검색 + 추가
     const search = h('input', { type: 'text', placeholder: '이름·주소·지역으로 찾기', value: self.query, oninput: (e) => { self.query = e.target.value; drawTable(); } });
     const addBtn = h('button', { class: 'btn', type: 'button', onclick: () => {
       const id = data.shops.reduce((m, s) => Math.max(m, Number(s.id) || 0), -1) + 1;
-      const area = 'seongsu';
-      data.shops.push({ id, tier: 1, area, areaName: self.areaName(data, area), name: '', addr: '', lat: 37.5445, lng: 127.0560, pick: false, photo: '', note: '', intro: [] });
+      const areaKeys = Object.keys(data.areas || {});
+      if (!areaKeys.length) { toast('지역(areas)이 하나도 없습니다. Supabase에서 먼저 지역을 넣어 주세요.', 'err'); return; }
+      const area = areaKeys[0];
+      const center = data.areas[area];
+      data.shops.push({ id, tier: 1, area, areaName: self.areaName(data, area), name: '', addr: '', lat: center.lat || 37.5445, lng: center.lng || 127.0560, pick: false, photo: '', note: '', intro: [] });
       self.selectedId = id;
       self.query = '';
       markDirty('shops');
