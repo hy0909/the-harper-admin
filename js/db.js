@@ -1,4 +1,4 @@
-/* Supabase 저장소 — 테이블(editors, site_content, areas, shops)과 사진 버킷(images) */
+/* Supabase 저장소 — 테이블(editors, site_content, areas, shops, magazines)과 사진 버킷(images) */
 const DB = {
   client: null,
   BUCKET: 'images',
@@ -36,6 +36,7 @@ const DB = {
   async load(file) {
     if (file === 'content') return this.loadContent();
     if (file === 'shops') return this.loadShops();
+    if (file === 'magazines') return this.loadMagazines();
     throw new Error('알 수 없는 데이터: ' + file);
   },
 
@@ -81,11 +82,53 @@ const DB = {
     };
   },
 
+  // 에디터(읽기 전용) + 매거진 → { editors:[{id,name,avatar}], magazines:[row 그대로(snake_case)] }
+  async loadMagazines() {
+    const ed = await this.client.from('editors').select('id,name,avatar,sort').order('sort', { ascending: true }).order('id');
+    if (ed.error) throw ed.error;
+    const mg = await this.client.from('magazines').select('*').order('sort', { ascending: true }).order('id');
+    if (mg.error) throw mg.error;
+    return {
+      editors: (ed.data || []).map((r) => ({ id: r.id, name: r.name, avatar: r.avatar || '' })),
+      magazines: (mg.data || []).map((r) => this.magFromRow(r)),
+    };
+  },
+
+  magFromRow(r) {
+    const str = (v) => (v == null ? '' : String(v));
+    return {
+      id: str(r.id), kind: r.kind === 'tour' ? 'tour' : 'magazine', badge: str(r.badge), title: str(r.title), hero: str(r.hero),
+      editor: str(r.editor), date: str(r.date), price: str(r.price), note: str(r.note), summary: str(r.summary),
+      info: Array.isArray(r.info) ? r.info.map((x) => ({ label: str(x && x.label), value: str(x && x.value) })) : [],
+      intro: str(r.intro),
+      sections: Array.isArray(r.sections) ? r.sections.map((x) => ({
+        heading: str(x && x.heading), sub: str(x && x.sub), image: str(x && x.image), body: str(x && x.body),
+        link: str(x && x.link), link_label: str(x && x.link_label),
+      })) : [],
+      related_label: str(r.related_label), related_link: str(r.related_link), cta_label: str(r.cta_label), cta_link: str(r.cta_link),
+    };
+  },
+  magToRow(m, sort) {
+    const str = (v) => (v == null ? '' : String(v));
+    return {
+      id: str(m.id).trim(), kind: m.kind === 'tour' ? 'tour' : 'magazine', badge: str(m.badge), title: str(m.title), hero: str(m.hero),
+      editor: str(m.editor), date: str(m.date), price: str(m.price), note: str(m.note), summary: str(m.summary),
+      info: (m.info || []).map((x) => ({ label: str(x.label), value: str(x.value) })),
+      intro: str(m.intro),
+      sections: (m.sections || []).map((x) => ({
+        heading: str(x.heading), sub: str(x.sub), image: str(x.image), body: str(x.body), link: str(x.link), link_label: str(x.link_label),
+      })),
+      related_label: str(m.related_label), related_link: str(m.related_link), cta_label: str(m.cta_label), cta_link: str(m.cta_link),
+      sort,
+    };
+  },
+
   // ---- 쓰기 ----
   // data: 현재 화면 데이터, prev: 불러왔을 때(또는 마지막 저장 때)의 복사본
   async save(file, data, prev) {
     if (file === 'content') return this.saveContent(data, prev);
     if (file === 'shops') return this.saveShops(data, prev);
+    if (file === 'magazines') return this.saveMagazines(data, prev);
     throw new Error('알 수 없는 데이터: ' + file);
   },
 
@@ -119,6 +162,24 @@ const DB = {
     const removed = Object.keys(prevRows).map(Number).filter((id) => !keep.has(id));
     if (removed.length) {
       const del = await this.client.from('shops').delete().in('id', removed);
+      if (del.error) throw del.error;
+    }
+  },
+
+  // 매거진: 바뀐 글만 upsert(sort = 목록 순서), 지운 글은 삭제. 에디터 목록은 읽기 전용이라 건드리지 않음
+  async saveMagazines(data, prev) {
+    const prevRows = {};
+    ((prev && prev.magazines) || []).forEach((m, i) => { prevRows[m.id] = JSON.stringify(this.magToRow(m, i)); });
+    const rows = (data.magazines || []).map((m, i) => this.magToRow(m, i));
+    const changed = rows.filter((r) => prevRows[r.id] !== JSON.stringify(r));
+    if (changed.length) {
+      const up = await this.client.from('magazines').upsert(changed, { onConflict: 'id' });
+      if (up.error) throw up.error;
+    }
+    const keep = new Set(rows.map((r) => r.id));
+    const removed = Object.keys(prevRows).filter((id) => !keep.has(id));
+    if (removed.length) {
+      const del = await this.client.from('magazines').delete().in('id', removed);
       if (del.error) throw del.error;
     }
   },
@@ -162,7 +223,8 @@ const DB = {
     if (this.isAuthError(e)) return '로그인이 만료되었습니다. 다시 로그인해 주세요.';
     if (e.code === '42501' || /row-level security|violates row-level/i.test(m)) return '쓰기 권한이 없습니다. 로그인 상태를 확인하세요.';
     if (e.code === '23503' || /foreign key/i.test(m)) return '없는 지역을 가리키고 있습니다. 지역을 다시 골라 주세요.';
-    if (e.code === '42P01' || /relation .* does not exist|Could not find the table/i.test(m)) return '테이블이 없습니다. supabase/schema.sql을 먼저 실행해 주세요.';
+    if (e.code === '23505' || /duplicate key/i.test(m)) return '같은 id가 이미 있습니다. 다른 id를 적어 주세요.';
+    if (e.code === '42P01' || /relation .* does not exist|Could not find the table/i.test(m)) return '테이블이 없습니다. supabase/ 안의 SQL을 먼저 실행해 주세요.';
     if (/Bucket not found/i.test(m)) return '사진 버킷(images)이 없습니다. supabase/schema.sql을 먼저 실행해 주세요.';
     if (/Payload too large|exceeded the maximum allowed size/i.test(m)) return '사진이 너무 큽니다.';
     return m || '알 수 없는 오류';

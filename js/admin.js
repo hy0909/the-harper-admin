@@ -5,6 +5,7 @@ const App = {
   loadedAt: Date.now(),
   files: {
     content: { data: null, saved: null, dirty: false, label: '메인 화면·에디터' },
+    magazines: { data: null, saved: null, dirty: false, label: '매거진' },
     shops:   { data: null, saved: null, dirty: false, label: '지도 샵' },
   },
   screens: {}, // 각 화면 모듈이 등록: { render(root), validate() }

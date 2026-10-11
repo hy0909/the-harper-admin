@@ -56,6 +56,7 @@ select{appearance:none;-webkit-appearance:none;background-image:url("data:image/
 .btn.small{padding:6px 10px;font-size:13px}
 .btn.icon{padding:6px 8px;min-width:32px}
 .btn.wide{width:100%}
+a.btn{text-decoration:none}
 
 .toggle{display:inline-flex;align-items:center;gap:8px;cursor:pointer;font-size:14px;user-select:none}
 .toggle input{position:absolute;opacity:0;width:0;height:0}
@@ -146,6 +147,27 @@ select{appearance:none;-webkit-appearance:none;background-image:url("data:image/
 .pv-pick-price{display:flex;align-items:center;gap:6px}
 .pv-pick-value{font-weight:600;font-size:16px;line-height:1.5;letter-spacing:.0912px;color:#5b5650}
 .pv-pick-note{font-weight:400;font-size:11px;line-height:1.36;letter-spacing:-.11px;color:#87827c}
+
+/* 매거진: 왼쪽 목록 + 오른쪽 수정 폼 */
+.mag-layout{display:grid;grid-template-columns:280px minmax(0,1fr);gap:16px;align-items:start}
+.mag-layout .card{margin-bottom:0}
+.mag-layout > .card:first-child{position:sticky;top:20px}
+.mag-list{display:flex;flex-direction:column;gap:6px}
+.mag-item{display:flex;align-items:center;gap:8px;padding:10px 12px;border:1px solid var(--line);border-radius:var(--r-input);background:#fff;cursor:pointer;text-align:left;width:100%}
+.mag-item:hover{border-color:var(--ink-30)}
+.mag-item.sel{border-color:var(--cocoa);box-shadow:inset 3px 0 0 var(--cocoa)}
+.mag-item .txt{flex:1;min-width:0}
+.mag-item .ttl{display:block;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mag-item .ord{display:flex;flex-direction:column;gap:2px;flex:none}
+.mag-item .ord .btn{padding:2px 6px;min-width:26px;font-size:11px;line-height:1.2}
+.chip{display:inline-block;font-size:11px;padding:2px 7px;border-radius:999px;background:var(--page);color:var(--ink-70);margin-right:4px;margin-top:4px}
+.chip.tour{background:var(--petal);color:var(--ink)}
+.chip.mag{background:#e4ebe5;color:#2c4831}
+.mag-form .card-head h2{word-break:keep-all}
+@media (max-width:719px){
+  .mag-layout{grid-template-columns:1fr}
+  .mag-layout > .card:first-child{position:static}
+}
 
 /* 샵 목록 */
 .shops-layout{display:grid;grid-template-columns:1fr;gap:16px}

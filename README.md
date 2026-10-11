@@ -4,7 +4,7 @@ THE HARPER 앱(https://hy0909.github.io/the-harper-app/)의 내용을 고치는 
 서버 없이 브라우저만으로 돌아가고, 내용은 Supabase에 저장됩니다. 저장하면 앱에 바로 반영됩니다.
 
 - 관리자 주소: https://hy0909.github.io/the-harper-admin/
-- 데이터: Supabase 프로젝트 `cwpucaqnhuaoglxcfdzz`의 테이블 `editors`, `site_content`, `areas`, `shops`
+- 데이터: Supabase 프로젝트 `cwpucaqnhuaoglxcfdzz`의 테이블 `editors`, `site_content`, `areas`, `shops`, `magazines`
 - 사진: Supabase Storage 버킷 `images`(공개)
 
 ## 할 수 있는 것
@@ -13,6 +13,7 @@ THE HARPER 앱(https://hy0909.github.io/the-harper-app/)의 내용을 고치는 
 | --- | --- | --- |
 | 에디터 | 에디터 목록. 프로필 사진, 닉네임. 추가·삭제(다른 곳에서 쓰이는 에디터는 삭제 안 됨) | `editors` |
 | 메인 화면 | 오늘의 추천, 투어 종류(순서 바꾸기·예약 가능 여부), 에디터 큐레이션 피드(카드 색·사진·배지), 에디터’s PICK | `site_content` (key=`home`) |
+| 매거진 | 매거진·투어 상세 글 목록. 종류·배지·제목·대표 사진·에디터·날짜·가격·요약·안내 정보·본문·섹션·버튼. 순서 바꾸기, 추가·삭제 | `magazines` (에디터 선택지는 `editors`) |
 | 지도 샵 | 매장 목록 검색, 전체 항목 수정, 지도에서 핀으로 위치 잡기, 소개 글 문단, 추가·삭제 | `shops` (지역 선택지는 `areas`) |
 
 ## 처음 한 번 할 일 (Supabase)
@@ -30,7 +31,7 @@ THE HARPER 앱(https://hy0909.github.io/the-harper-app/)의 내용을 고치는 
 - 화면마다 **저장** 버튼이 있습니다. 고친 게 있으면 버튼이 켜지고 탭에 주황 점이 생깁니다.
 - 저장을 누르면 Supabase 테이블에 바로 쓰고, 앱은 열 때마다 Supabase에서 읽으므로 **바로 반영**됩니다.
 - 에디터와 메인 화면은 한 묶음이라 어느 쪽에서 저장해도 둘 다 저장됩니다.
-- 지도 샵은 바뀐 샵만 고치고, 지운 샵은 테이블에서도 지웁니다.
+- 지도 샵과 매거진은 바뀐 것만 고치고, 지운 것은 테이블에서도 지웁니다.
 - 저장하지 않고 창을 닫으려 하면 경고가 뜹니다.
 
 ## 사진은 어디로 가나
@@ -59,6 +60,7 @@ python3 -m http.server 8790
 - `js/ui.js` 입력 필드·이미지 업로드·저장 버튼
 - `js/screen-editors.js` 에디터 화면
 - `js/screen-home.js` 메인 화면
+- `js/screen-magazines.js` 매거진 화면
 - `js/screen-shops.js` 지도 샵 화면
 - `js/admin.js` 로그인·탭·불러오기·저장
 - `supabase/schema.sql` 테이블·권한·버킷·초기 데이터
