@@ -1,6 +1,6 @@
 /* 매거진 화면: 왼쪽 글 목록, 오른쪽 수정 폼. 테이블 magazines 한 줄 = 글 하나 */
 App.screens.magazines = {
-  files: ['magazines'],
+  files: ['magazines', 'content'], // 메인 화면이 가리키는 글인지 보려고 content 도 읽는다
   selectedId: null,
   idTouched: new WeakSet(), // id 칸을 직접 고친 새 글 (제목으로 자동 채우기를 멈춤)
   APP_URL: 'https://hy0909.github.io/the-harper-app/magazine.html?id=',
@@ -31,6 +31,16 @@ App.screens.magazines = {
     const ids = new Set((data.magazines || []).filter((m) => m !== except).map((m) => m.id));
     while (ids.has(id)) id = `${base}-${n++}`;
     return id;
+  },
+
+  // 메인 화면(오늘의 추천 · 피드 · PICK)이 이 글 id 를 쓰는 자리
+  homeReferences(id) {
+    const home = (App.files.content && App.files.content.data && App.files.content.data.home) || {};
+    const refs = [];
+    if (home.today && home.today.magazine === id) refs.push('메인 화면 › 오늘의 추천');
+    ((home.feed && home.feed.items) || []).forEach((it, i) => { if (it.magazine === id) refs.push(`메인 화면 › 큐레이션 피드 ${i + 1}번`); });
+    ((home.picks && home.picks.items) || []).forEach((it, i) => { if (it.magazine === id) refs.push(`메인 화면 › 에디터’s PICK ${i + 1}번`); });
+    return refs;
   },
 
   validate() {
@@ -197,6 +207,8 @@ App.screens.magazines = {
         h('div', { class: 'actions' },
           appLink,
           h('button', { class: 'btn small danger', type: 'button', onclick: () => {
+            const used = self.homeReferences(m.id);
+            if (used.length) { alert(`이 글은 메인 화면에서 쓰이고 있어 지울 수 없습니다. 먼저 메인 화면에서 다른 글로 바꿔 주세요.\n\n- ${used.join('\n- ')}`); return; }
             if (!confirm(`"${m.title || '이 글'}"을 삭제할까요? 저장을 누르면 앱에서도 사라집니다.`)) return;
             data.magazines.splice(idx, 1);
             self.selectedId = null;

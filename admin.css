@@ -135,8 +135,6 @@ a.btn{text-decoration:none}
 .pv-shade{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0) 50%,rgba(0,0,0,.6) 100%);pointer-events:none}
 .pv-shade--top{background:linear-gradient(to bottom,rgba(48,34,28,.8) 0%,rgba(48,34,28,0) 78%)}
 .pv-top{position:relative;width:100%;display:flex;flex-direction:column;gap:8px}
-.pv-price-row{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
-.pv-price{font-weight:700;font-size:20px;line-height:1.4;color:#faf9f6}
 .pv-ed{position:relative;display:flex;align-items:center;gap:6px}
 .pv-av{width:28px;height:28px;border-radius:99px;background:#87827c;display:block;object-fit:cover;flex:none}
 .pv-ed-name{font-weight:600;font-size:12px;line-height:1.36;letter-spacing:-.12px;color:#faf9f6}
@@ -144,9 +142,6 @@ a.btn{text-decoration:none}
 .pv-pick{width:400px;display:flex;flex-direction:column;gap:16px}
 .pv-pick-text{display:flex;flex-direction:column;gap:2px}
 .pv-pick-title{word-break:keep-all;font-weight:800;font-size:22px;line-height:1.364;letter-spacing:-.4268px;color:#3a362f}
-.pv-pick-price{display:flex;align-items:center;gap:6px}
-.pv-pick-value{font-weight:600;font-size:16px;line-height:1.5;letter-spacing:.0912px;color:#5b5650}
-.pv-pick-note{font-weight:400;font-size:11px;line-height:1.36;letter-spacing:-.11px;color:#87827c}
 
 /* 매거진: 왼쪽 목록 + 오른쪽 수정 폼 */
 .mag-layout{display:grid;grid-template-columns:280px minmax(0,1fr);gap:16px;align-items:start}

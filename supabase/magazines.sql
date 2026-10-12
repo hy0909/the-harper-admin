@@ -1,4 +1,4 @@
--- THE HARPER: 매거진 글(magazines) 표 · 권한 · 초기 데이터 · 홈 피드 링크 갱신
+-- THE HARPER: 매거진 글(magazines) 표 · 권한 · 초기 데이터
 -- Supabase 대시보드 > SQL Editor 에 통째로 붙여넣고 Run 하면 된다. 두 번 실행해도 안전하다.
 -- 열은 앱의 data/magazines.json 과 같은 모양. info · sections 는 jsonb 배열.
 

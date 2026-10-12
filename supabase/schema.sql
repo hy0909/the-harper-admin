@@ -78,12 +78,7 @@ insert into shops (id,tier,area,area_name,name,addr,lat,lng,pick,photo,note,intr
 insert into shops (id,tier,area,area_name,name,addr,lat,lng,pick,photo,note,intro,hours,closed,phone,sort) values (6,3,'hannam','한남','엠프티 한남','한남동 [확인 필요]',37.5357,127.0005,false,'assets/photos/hannam-vintage.jpg','신진 브랜드를 모아 둔 무신사 편집샵','["무신사가 꾸린 오프라인 편집샵이에요. 온라인에서만 보던 신진 브랜드를 직접 입어 볼 수 있습니다."]'::jsonb,null,null,null,6) on conflict (id) do nothing;
 
 -- 5. 2026-10-12 추가분. 위와 같이 두 번 실행해도 안전하다.
--- 5-1. 에디터's PICK 가격 표기를 '128,000원~'으로(￦ 기호 대신 '원')
-update site_content
-set value = jsonb_set(value, '{picks,items}',
-  (select jsonb_agg(jsonb_set(i, '{price}', '"128,000원~"')) from jsonb_array_elements(value->'picks'->'items') i)),
-  updated_at = now()
-where key = 'home' and value->'picks'->'items' is not null;
+-- (5-1 은 지움: 에디터's PICK 에 가격 칸이 없어졌다)
 
 -- 5-2. 압구정(도산) 지역과 매장 7곳. 자세한 설명은 supabase/shops-apgujeong.sql
 insert into areas (id,name,lat,lng) values ('apgujeong','압구정',37.5250,127.0365) on conflict (id) do nothing;
@@ -108,4 +103,4 @@ where key = 'home' and value->'tours'->'items'->0->>'price' = '128,000원 부터
 update site_content
 set value = '{"today": {"eyebrow": "오늘의 추천", "magazine": "k-brand-celeb"}, "tours": {"title": "투어 종류", "soonLabel": "오픈 예정", "info": {"title": "투어 종류 안내", "note": "DAY DROP부터 예약할 수 있어요. 나머지 투어는 차례로 열립니다."}, "items": [{"tier": "DAY DROP", "title": "3시간 동행 쇼핑 큐레이션", "price": "128,000원~", "open": true, "desc": "에디터와 반나절 동안 성수·한남·압구정의 매장을 함께 돌며 옷을 고르는 단품 큐레이션이에요. 입어 볼 때 옆에서 솔직하게 말해 드려요. 4인 기준 가격입니다."}, {"tier": "CAPSULE", "title": "하루종일 1:1 큐레이션", "price": "", "open": false, "desc": "하루를 통째로 에디터 한 명과 1:1로 다니는 큐레이션이에요. 취향을 미리 듣고 코스를 짭니다."}, {"tier": "SIGNATURE", "title": "1박 헤리티지 투어", "price": "", "open": false, "desc": "1박 2일 동안 서울의 K-패션 뿌리를 따라가는 투어예요. 쇼룸과 공방, 디자이너를 만나는 일정이 들어갑니다."}, {"tier": "BESPOKE", "title": "VIP 맞춤 투어", "price": "", "open": false, "desc": "일정·동선·동행 인원을 처음부터 맞춰 짜는 투어예요. 문의 후 상담으로 정합니다."}]}, "feed": {"title": "에디터 큐레이션 피드", "items": [{"magazine": "k-brand-interview", "color": "blush"}, {"magazine": "k-brand-showroom", "color": "beige"}, {"magazine": "seongsu-daydrop", "color": "jade"}]}, "picks": {"title": "에디터’s PICK", "items": [{"magazine": "seongsu-daydrop"}, {"magazine": "k-brand-celeb"}, {"magazine": "k-brand-interview"}, {"magazine": "k-brand-showroom"}]}}'::jsonb,
   updated_at = now()
-where key = 'home' and value->'today'->>'magazine' is null; -- 아직 옛 구조(제목·사진 직접 입력)일 때만 바꾼다. 관리자에서 고친 새 값은 덮지 않는다
+where key = 'home' and coalesce(value->'today'->>'magazine', '') = ''; -- 아직 옛 구조(제목·사진 직접 입력)일 때만 바꾼다. 관리자에서 고친 새 값은 덮지 않는다

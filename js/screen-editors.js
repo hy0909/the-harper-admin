@@ -1,6 +1,6 @@
 /* 에디터 화면 */
 App.screens.editors = {
-  files: ['content'],
+  files: ['content', 'magazines'], // 에디터가 매거진에서 쓰이는지 보려면 매거진도 읽어야 한다
 
   // 에디터 id가 어디서 쓰이는지
   references(content, id) {
@@ -18,6 +18,8 @@ App.screens.editors = {
   validate() {
     const c = App.files.content.data;
     const errors = [];
+    // content 파일은 메인 화면 값도 같이 올라가므로, 메인 화면 검사도 함께 돌려 덜 된 값(매거진 안 고른 카드)이 저장되지 않게 한다
+    if (App.screens.home && App.files.magazines && App.files.magazines.data) errors.push(...App.screens.home.validate());
     const ids = new Set();
     (c.editors || []).forEach((e, i) => {
       if (!e.name || !e.name.trim()) errors.push(`${i + 1}번 에디터: 닉네임을 적어 주세요.`);
