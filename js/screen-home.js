@@ -6,6 +6,9 @@ const COLORS = [
   { id: 'terracotta', label: '테라코타', hex: '#c97b5c' },
 ];
 
+// 줄바꿈 제목 칸 안내 글
+const TITLE_HINT = '비우면 매거진 제목 그대로. 줄을 바꾸면 앱에서도 그 자리에서 줄이 바뀝니다. 글자는 매거진 제목과 같아야 합니다';
+
 // 옛 구조의 링크 "magazine.html?id=xxx" 에서 매거진 id만 꺼낸다
 function magIdFromLink(link) {
   const m = /magazine\.html\?id=([^&#]+)/.exec(String(link || ''));
@@ -23,11 +26,11 @@ App.screens.home = {
     const hm = content.home;
     const keepOnly = (obj, keys) => { Object.keys(obj).forEach((k) => { if (!keys.includes(k)) delete obj[k]; }); };
 
-    // 오늘의 추천: 머리글과 매거진 id만 남긴다
+    // 오늘의 추천: 머리글, 매거진 id, 줄바꿈 제목만 남긴다(옛 제목이 있으면 줄바꿈 제목으로 남긴다)
     hm.today = hm.today || {};
     if (hm.today.magazine == null) hm.today.magazine = magIdFromLink(hm.today.link);
     if (hm.today.eyebrow == null) hm.today.eyebrow = '';
-    keepOnly(hm.today, ['eyebrow', 'magazine']);
+    keepOnly(hm.today, ['eyebrow', 'magazine', 'title']);
 
     // 투어 종류: 항목마다 설명, 섹션에 안내 창 제목·한 줄
     hm.tours = hm.tours || { title: '투어 종류', items: [], soonLabel: '' };
@@ -35,12 +38,12 @@ App.screens.home = {
     hm.tours.info = hm.tours.info || { title: '투어 종류 안내', note: '' };
     hm.tours.items.forEach((t) => { if (t.desc == null) t.desc = ''; });
 
-    // 큐레이션 피드: 매거진 id와 카드 색만 남긴다
+    // 큐레이션 피드: 매거진 id, 카드 색, 줄바꿈 제목만 남긴다(옛 제목이 있으면 줄바꿈 제목으로 남긴다)
     hm.feed = hm.feed || { title: '에디터 큐레이션 피드', items: [] };
     hm.feed.items = hm.feed.items || [];
     hm.feed.items.forEach((it) => {
       if (it.magazine == null) it.magazine = magIdFromLink(it.link);
-      keepOnly(it, ['magazine', 'color']);
+      keepOnly(it, ['magazine', 'color', 'title']);
     });
 
     // PICK: 매거진 id만 남긴다
@@ -58,15 +61,26 @@ App.screens.home = {
     const c = App.files.content.data;
     this.ensure(c);
     const hm = c.home, errors = [];
-    const magIds = new Set((App.files.magazines.data.magazines || []).map((m) => m.id));
+    const mags = App.files.magazines.data.magazines || [];
+    const magIds = new Set(mags.map((m) => m.id));
     const okMag = (id) => !!id && magIds.has(id);
+    // 줄바꿈 제목: 비어 있으면 매거진 제목을 그대로 쓴다. 적었으면 줄바꿈·공백을 뺀 글자가 매거진 제목과 같아야 한다
+    const sameText = (a, b) => String(a || '').replace(/\s/g, '') === String(b || '').replace(/\s/g, '');
+    const checkTitle = (item, where) => {
+      if (!String(item.title || '').trim()) return;
+      const m = mags.find((x) => x.id === item.magazine);
+      if (!m) return; // 매거진을 안 고른 경우는 아래 오류가 따로 알린다
+      if (!sameText(item.title, m.title)) errors.push(`${where}: 줄바꿈 제목의 글자가 매거진 제목과 다릅니다(줄바꿈·띄어쓰기만 바꿀 수 있어요)`);
+    };
     if (!okMag(hm.today.magazine)) errors.push('오늘의 추천: 매거진을 골라 주세요.');
+    checkTitle(hm.today, '오늘의 추천');
     hm.tours.items.forEach((t, i) => {
       if (!t.tier || !t.tier.trim()) errors.push(`투어 종류 ${i + 1}번: 등급 이름(예: DAY DROP)을 적어 주세요.`);
       if (!t.title || !t.title.trim()) errors.push(`투어 종류 ${i + 1}번: 제목을 적어 주세요.`);
     });
     hm.feed.items.forEach((it, i) => {
       if (!okMag(it.magazine)) errors.push(`큐레이션 피드 ${i + 1}번: 매거진을 골라 주세요.`);
+      checkTitle(it, `큐레이션 피드 ${i + 1}번`);
       if (!COLORS.some((cc) => cc.id === it.color)) errors.push(`큐레이션 피드 ${i + 1}번: 카드 색을 골라 주세요.`);
     });
     hm.picks.items.forEach((it, i) => {
@@ -75,11 +89,23 @@ App.screens.home = {
     return errors;
   },
 
-  // 카드가 가리키는 매거진의 사진·제목·에디터 (+ 카드 색)
+  // 카드가 가리키는 매거진의 사진·제목·에디터 (+ 카드 색). 줄바꿈 제목이 있으면 그것을 쓴다
   viewOf(item, mags) {
     const m = mags.find((x) => x.id === item.magazine);
     if (!m) return { title: '매거진을 고르세요', image: '', editor: '', color: item.color };
-    return { title: m.title, image: m.hero, editor: m.editor, color: item.color };
+    const title = String(item.title || '').trim() ? item.title : m.title;
+    return { title, image: m.hero, editor: m.editor, color: item.color };
+  },
+
+  // 매거진을 고르거나 바꿨을 때 줄바꿈 제목 칸이 비어 있으면 매거진 제목으로 채운다
+  fillTitle(obj, magId, mags, field) {
+    if (String(obj.title || '').trim()) return;
+    const m = mags.find((x) => x.id === magId);
+    if (!m) return;
+    obj.title = m.title || '';
+    const ta = field.querySelector('textarea');
+    if (ta) ta.value = obj.title;
+    markDirty(UI.file);
   },
 
   // 매거진 고르기 목록: 값 = id, 글자 = 제목
@@ -110,7 +136,7 @@ App.screens.home = {
       } else {
         inner.append(h('div', { class: 'pv-pick' },
           h('div', { class: 'pv-photo pv-photo--pick' }, img, h('div', { class: 'pv-shade' }), editor),
-          h('div', { class: 'pv-pick-text' }, h('h2', { class: 'pv-pick-title' }, esc(v.title || '제목')))));
+          h('div', { class: 'pv-pick-text' }, h('h2', { class: 'pv-pick-title' }, ...br(v.title || '제목')))));
       }
       // 줄인 만큼 바깥 상자 높이를 맞춘다
       requestAnimationFrame(() => { box.style.height = Math.round(inner.offsetHeight / 2) + 'px'; });
@@ -150,6 +176,7 @@ App.screens.home = {
     // 1. 오늘의 추천
     const t = hm.today;
     const todayPv = self.preview(() => self.viewOf(t, mags), content, 'pick');
+    const todayTitle = fieldText('줄바꿈 제목', t, 'title', { textarea: true, rows: 2, hint: TITLE_HINT, onChange: () => todayPv.firstChild.redraw() });
     root.append(h('div', { class: 'card' },
       h('div', { class: 'card-head' }, h('h2', null, '오늘의 추천')),
       h('div', { class: 'item-row' },
@@ -157,7 +184,8 @@ App.screens.home = {
           fieldText('작은 머리글', t, 'eyebrow', { placeholder: '오늘의 추천' }),
           fieldSelect('매거진', t, 'magazine', magOpts, { required: true, allowEmpty: true, emptyLabel: '매거진을 고르세요',
             hint: '매거진 화면의 글 가운데 고릅니다. 사진·제목·에디터는 그 글을 따릅니다.',
-            onChange: () => todayPv.firstChild.redraw() })),
+            onChange: (id) => { self.fillTitle(t, id, mags, todayTitle); todayPv.firstChild.redraw(); } }),
+          todayTitle),
         todayPv)));
 
     // 2. 투어 종류
@@ -198,19 +226,22 @@ App.screens.home = {
       feed.items.forEach((it, i) => {
         const pv = self.preview(() => self.viewOf(it, mags), content, 'feed');
         const redraw = () => pv.firstChild.redraw();
+        const itemTitle = fieldText('줄바꿈 제목', it, 'title', { textarea: true, rows: 2, hint: TITLE_HINT, onChange: redraw });
         feedList.append(h('div', { class: 'card sub' },
           h('div', { class: 'card-head' }, h('h3', null, h('span', { class: 'idx' }, i + 1), self.viewOf(it, mags).title.replace(/\n/g, ' ')), orderButtons(feed.items, i, drawFeed)),
           h('div', { class: 'item-row' },
             h('div', null,
               self.colorPicker(it, redraw),
-              fieldSelect('매거진', it, 'magazine', magOpts, { required: true, allowEmpty: true, emptyLabel: '매거진을 고르세요', onChange: redraw })),
+              fieldSelect('매거진', it, 'magazine', magOpts, { required: true, allowEmpty: true, emptyLabel: '매거진을 고르세요',
+                onChange: (id) => { self.fillTitle(it, id, mags, itemTitle); redraw(); } }),
+              itemTitle),
             pv)));
       });
     };
     drawFeed();
     root.append(h('div', { class: 'card' },
       h('div', { class: 'card-head' }, h('h2', null, '에디터 큐레이션 피드'),
-        h('button', { class: 'btn small', type: 'button', onclick: () => { feed.items.push({ magazine: '', color: 'blush' }); markDirty('content'); drawFeed(); } }, '+ 카드 추가')),
+        h('button', { class: 'btn small', type: 'button', onclick: () => { feed.items.push({ magazine: '', color: 'blush', title: '' }); markDirty('content'); drawFeed(); } }, '+ 카드 추가')),
       fieldText('섹션 제목', feed, 'title', { placeholder: '에디터 큐레이션 피드' }),
       feedList));
 
