@@ -164,7 +164,7 @@ a.btn{text-decoration:none}
   .mag-layout > .card:first-child{position:static}
 }
 
-/* 샵 목록 */
+/* 매장 목록 */
 .shops-layout{display:grid;grid-template-columns:1fr;gap:16px}
 .toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
 .toolbar input[type=text]{flex:1;min-width:160px}

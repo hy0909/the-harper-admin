@@ -1,4 +1,4 @@
-/* 지도 샵 화면 */
+/* 매장 화면 */
 App.screens.shops = {
   files: ['shops'],
   selectedId: null,
@@ -19,8 +19,8 @@ App.screens.shops = {
     const d = App.files.shops.data;
     const errors = [];
     (d.shops || []).forEach((s, i) => {
-      const who = s.name ? `"${s.name}"` : `${i + 1}번 샵`;
-      if (!s.name || !s.name.trim()) errors.push(`${i + 1}번 샵: 이름을 적어 주세요.`);
+      const who = s.name ? `"${s.name}"` : `${i + 1}번 매장`;
+      if (!s.name || !s.name.trim()) errors.push(`${i + 1}번 매장: 이름을 적어 주세요.`);
       if (!s.area) errors.push(`${who}: 지역을 골라 주세요.`);
       if (!s.photo) errors.push(`${who}: 사진이 필요합니다.`);
       if (!(s.tier >= 1 && s.tier <= 5)) errors.push(`${who}: 등급은 1~5 사이여야 합니다.`);
@@ -36,7 +36,7 @@ App.screens.shops = {
     const self = this;
     const rerender = () => { const y = window.scrollY; root.innerHTML = ''; self.render(root); window.scrollTo(0, y); };
 
-    root.append(screenHead('지도 샵', '지도 화면에 나오는 매장 목록입니다. 목록에서 샵을 누르면 아래에 수정 칸이 열립니다.', 'shops',
+    root.append(screenHead('매장', '지도 화면에 나오는 매장 목록입니다. 목록에서 매장을 누르면 아래에 수정 칸이 열립니다.', 'shops',
       () => App.save('shops', () => self.validate())));
     root.append(h('div', { id: 'errbox' }));
 
@@ -54,7 +54,7 @@ App.screens.shops = {
       markDirty('shops');
       rerender();
       setTimeout(() => { const f = $('#shop-form'); if (f) f.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50);
-    } }, '+ 샵 추가');
+    } }, '+ 매장 추가');
 
     const tableWrap = h('div', { class: 'table-wrap' });
     const drawTable = () => {
@@ -72,7 +72,7 @@ App.screens.shops = {
     };
     drawTable();
     root.append(h('div', { class: 'card' },
-      h('div', { class: 'card-head' }, h('h2', null, `샵 목록 (${data.shops.length})`), addBtn),
+      h('div', { class: 'card-head' }, h('h2', null, `매장 목록 (${data.shops.length})`), addBtn),
       h('div', { class: 'toolbar' }, search),
       tableWrap));
 
@@ -108,7 +108,7 @@ App.screens.shops = {
       h('div', { class: 'card-head' }, title,
         h('div', { class: 'actions' },
           h('button', { class: 'btn small danger', type: 'button', onclick: () => {
-            if (!confirm(`"${shop.name || '이 샵'}"을 삭제할까요?`)) return;
+            if (!confirm(`"${shop.name || '이 매장'}"을 삭제할까요?`)) return;
             data.shops.splice(idx, 1);
             self.selectedId = null;
             markDirty('shops');

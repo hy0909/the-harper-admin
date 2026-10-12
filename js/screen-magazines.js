@@ -197,7 +197,7 @@ App.screens.magazines = {
           fieldText('본문', s, 'body', { textarea: true, rows: 5, placeholder: '섹션 내용', hint: '빈 줄 = 문단 나누기' }),
           h('div', { class: 'grid2' },
             fieldText('링크', s, 'link', { placeholder: 'shop.html?id=12 또는 https://…' }),
-            fieldText('링크 글자', s, 'link_label', { placeholder: '샵 보기' }))));
+            fieldText('링크 글자', s, 'link_label', { placeholder: '매장 보기' }))));
       });
     };
     drawSections();
@@ -239,7 +239,7 @@ App.screens.magazines = {
           h('button', { class: 'btn small', type: 'button', onclick: () => { m.sections.push({ heading: '', sub: '', image: '', body: '', link: '', link_label: '' }); markDirty('magazines'); drawSections(); } }, '+ 섹션 추가')),
         secList),
       h('div', { class: 'grid2' },
-        fieldText('관련 버튼 글자', m, 'related_label', { placeholder: '관련 샵 보기', hint: '비워 두면 버튼이 안 보입니다.' }),
+        fieldText('관련 버튼 글자', m, 'related_label', { placeholder: '관련 매장 보기', hint: '비워 두면 버튼이 안 보입니다.' }),
         fieldText('관련 버튼 링크', m, 'related_link', { placeholder: 'search.html' })),
       h('div', { class: 'grid2' },
         fieldText('하단 버튼 글자', m, 'cta_label', { placeholder: 'Instagram에서 보기', hint: '화면 아래 고정 버튼' }),

@@ -52,7 +52,7 @@ const DB = {
     };
   },
 
-  // 지역 + 샵 → { areas:{id:{name,lat,lng}}, shops:[camelCase] }
+  // 지역 + 매장 → { areas:{id:{name,lat,lng}}, shops:[camelCase] }
   async loadShops() {
     const ar = await this.client.from('areas').select('id,name,lat,lng').order('id');
     if (ar.error) throw ar.error;
