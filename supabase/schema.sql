@@ -76,3 +76,24 @@ insert into shops (id,tier,area,area_name,name,addr,lat,lng,pick,photo,note,intr
 insert into shops (id,tier,area,area_name,name,addr,lat,lng,pick,photo,note,intro,hours,closed,phone,sort) values (4,2,'hannam','한남','비이커 한남','이태원로54길 57',37.5351,127.0008,false,'assets/photos/hannam-hillside.jpg','국내외 브랜드를 넓게 모아 둔 한남 편집샵','["한남에서 가장 넓게 보는 편집샵이에요. 국내 브랜드와 해외 브랜드가 같이 걸려 있어 비교해 보기 좋습니다."]'::jsonb,null,null,null,4) on conflict (id) do nothing;
 insert into shops (id,tier,area,area_name,name,addr,lat,lng,pick,photo,note,intro,hours,closed,phone,sort) values (5,2,'hannam','한남','아모멘토 한남','한남동 [확인 필요]',37.534,127.003,false,'assets/photos/hannam-alley.jpg','군더더기 없는 한국 브랜드 플래그십','["색과 선을 최소로 줄인 옷을 만드는 브랜드의 플래그십이에요. 베이식한 옷을 오래 입고 싶은 분께 먼저 권합니다."]'::jsonb,null,null,null,5) on conflict (id) do nothing;
 insert into shops (id,tier,area,area_name,name,addr,lat,lng,pick,photo,note,intro,hours,closed,phone,sort) values (6,3,'hannam','한남','엠프티 한남','한남동 [확인 필요]',37.5357,127.0005,false,'assets/photos/hannam-vintage.jpg','신진 브랜드를 모아 둔 무신사 편집샵','["무신사가 꾸린 오프라인 편집샵이에요. 온라인에서만 보던 신진 브랜드를 직접 입어 볼 수 있습니다."]'::jsonb,null,null,null,6) on conflict (id) do nothing;
+
+-- 5. 2026-10-12 추가분. 위와 같이 두 번 실행해도 안전하다.
+-- 5-1. 에디터's PICK 가격 표기를 '128,000원~'으로(￦ 기호 대신 '원')
+update site_content
+set value = jsonb_set(value, '{picks,items}',
+  (select jsonb_agg(jsonb_set(i, '{price}', '"128,000원~"')) from jsonb_array_elements(value->'picks'->'items') i)),
+  updated_at = now()
+where key = 'home' and value->'picks'->'items' is not null;
+
+-- 5-2. 압구정(도산) 지역과 매장 7곳. 자세한 설명은 supabase/shops-apgujeong.sql
+insert into areas (id,name,lat,lng) values ('apgujeong','압구정',37.5250,127.0365) on conflict (id) do nothing;
+
+insert into shops (id,tier,area,area_name,name,addr,lat,lng,pick,photo,note,intro,hours,closed,phone,sort) values
+(7,2,'apgujeong','압구정','하우스 노웨어 도산','압구정로46길 50',37.52581,127.03590,false,'assets/photos/hannam-studio.jpg','도산 골목의 K-브랜드 편집샵','["압구정 도산 쇼룸 코스의 첫 집이에요. 매장 소개는 아직 정리 중입니다 [확인 필요]."]'::jsonb,null,null,null,7),
+(8,1,'apgujeong','압구정','글로니 도산','언주로164길 19',37.52550,127.03522,false,'assets/photos/seongsu-contemporary.jpg','20대 여성 팬덤이 탄탄한 서울 여성복 브랜드','["사랑스럽고 빈티지한 무드에 건강한 여성성을 더한 스타일이에요. 슬림한 톱과 니트, 미니 드레스와 데님 같은 데일리웨어가 강합니다.", "자매가 함께 이끄는 브랜드로, 2020년에 시작했어요."]'::jsonb,null,null,null,8),
+(9,1,'apgujeong','압구정','시눈 플래그십스토어 도산','압구정로42길 47',37.52390,127.03400,false,'assets/photos/hannam-alley.jpg','로맨틱한 소녀 감성을 서울 무드로 푼 여성복','["니트와 카디건, 스커트, 드레스처럼 부드러운 실루엣의 여성복과 액세서리가 주력이에요. 20대 여성층에서 인지도를 넓혀 온 브랜드입니다."]'::jsonb,null,null,null,9),
+(10,2,'apgujeong','압구정','엘보른 도산 플래그십스토어','압구정로42길 42',37.52370,127.03422,false,'assets/photos/hannam-hillside.jpg','도산의 K-브랜드 플래그십','["압구정 도산 쇼룸 코스에 들어가는 플래그십이에요. 매장 소개는 아직 정리 중입니다 [확인 필요]."]'::jsonb,null,null,null,10),
+(11,2,'apgujeong','압구정','아뜰리에 에디션','압구정로46길 34 1층-2층',37.52571,127.03610,false,'assets/photos/seongsu-alley.jpg','1·2층으로 이어지는 도산 편집샵','["1층과 2층을 같이 쓰는 편집샵이에요. 매장 소개는 아직 정리 중입니다 [확인 필요]."]'::jsonb,null,null,null,11),
+(12,3,'apgujeong','압구정','유메르 도산지점','도산대로49길 11 지층·1층',37.52427,127.03721,false,'assets/photos/hannam-vintage.jpg','도산의 K-브랜드 쇼룸','["지층과 1층을 같이 쓰는 매장이에요. 매장 소개는 아직 정리 중입니다 [확인 필요]."]'::jsonb,null,null,null,12),
+(13,2,'apgujeong','압구정','얼바닉30','선릉로160길 3',37.52634,127.04061,false,'assets/photos/seongsu-street.jpg','청담 쪽 골목의 K-브랜드 편집샵','["압구정 도산 코스의 마지막 집으로, 청담 쪽에 있어요. 매장 소개는 아직 정리 중입니다 [확인 필요]."]'::jsonb,null,null,null,13)
+on conflict (id) do nothing;
