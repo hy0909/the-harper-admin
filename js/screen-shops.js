@@ -61,7 +61,7 @@ App.screens.shops = {
       const q = self.query.trim().toLowerCase();
       const rows = data.shops.filter((s) => !q || [s.name, s.addr, s.areaName, s.area, s.note].some((v) => String(v || '').toLowerCase().includes(q)));
       tableWrap.innerHTML = '';
-      if (!rows.length) { tableWrap.append(h('div', { class: 'empty' }, data.shops.length ? '검색 결과가 없습니다.' : '샵이 없습니다. 위의 "샵 추가"를 눌러 주세요.')); return; }
+      if (!rows.length) { tableWrap.append(h('div', { class: 'empty' }, data.shops.length ? '검색 결과가 없습니다.' : '매장이 없습니다. 위의 "매장 추가"를 눌러 주세요.')); return; }
       tableWrap.append(h('table', { class: 'shop-table' },
         h('thead', null, h('tr', null, h('th', null, ''), h('th', null, '이름'), h('th', { class: 'hide-m' }, '주소'), h('th', null, '지역·등급'))),
         h('tbody', null, rows.map((s) => h('tr', { class: 'row' + (s.id === self.selectedId ? ' sel' : ''), onclick: () => { self.selectedId = s.id; rerender(); setTimeout(() => { const f = $('#shop-form'); if (f) f.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 50); } },
