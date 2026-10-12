@@ -35,7 +35,7 @@ App.screens.home = {
     // 투어 종류: 항목마다 설명, 섹션에 안내 창 제목·한 줄
     hm.tours = hm.tours || { title: '투어 종류', items: [], soonLabel: '' };
     hm.tours.items = hm.tours.items || [];
-    hm.tours.info = hm.tours.info || { title: '투어 종류 안내', note: '' };
+    hm.tours.info = hm.tours.info || { title: '투어 종류 안내' };
     hm.tours.items.forEach((t) => { if (t.desc == null) t.desc = ''; });
 
     // 큐레이션 피드: 매거진 id, 카드 색, 줄바꿈 제목만 남긴다(옛 제목이 있으면 줄바꿈 제목으로 남긴다)
@@ -213,8 +213,7 @@ App.screens.home = {
         fieldText('섹션 제목', tours, 'title', { placeholder: '투어 종류' }),
         fieldText('준비 중 표시 글자', tours, 'soonLabel', { placeholder: '오픈 예정' })),
       h('div', { class: 'grid2' },
-        fieldText('안내 창 제목', tours.info, 'title', { placeholder: '투어 종류 안내' }),
-        fieldText('안내 창 한 줄', tours.info, 'note', { placeholder: 'DAY DROP부터 예약할 수 있어요.' })),
+        fieldText('안내 창 제목', tours.info, 'title', { placeholder: '투어 종류 안내' })),
       tourList));
 
     // 3. 에디터 큐레이션 피드
