@@ -9,6 +9,9 @@ App.screens.editors = {
     if (home.today && home.today.editor === id) refs.push('메인 화면 › 오늘의 추천');
     ((home.feed && home.feed.items) || []).forEach((it, i) => { if (it.editor === id) refs.push(`메인 화면 › 큐레이션 피드 ${i + 1}번 "${(it.title || '').replace(/\n/g, ' ')}"`); });
     ((home.picks && home.picks.items) || []).forEach((it, i) => { if (it.editor === id) refs.push(`메인 화면 › 에디터’s PICK ${i + 1}번 "${it.title || ''}"`); });
+    // 홈 카드는 이제 매거진을 가리키므로, 매거진 글의 에디터도 본다(매거진 화면을 연 적이 있을 때만 데이터가 있다)
+    const mags = (App.files.magazines && App.files.magazines.data && App.files.magazines.data.magazines) || [];
+    mags.forEach((m) => { if (m.editor === id) refs.push(`매거진 › "${m.title || m.id}"`); });
     return refs;
   },
 
