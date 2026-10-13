@@ -1,5 +1,5 @@
 -- THE HARPER: K-BRAND SERIES 001 OPEN YY 매거진 새 글(2026-10-13, hy0909)
--- 인스타그램 콘텐츠의 사진과 글로 새 글(k-brand-series-001)을 넣고, 홈 피드의 '성수 창고 쇼룸' 카드를 이 글로 바꾼다.
+-- 인스타그램 콘텐츠의 사진과 글로 새 글(k-brand-series-001)을 넣고, 홈 피드 맨 뒤에 이 글 카드를 하나 더 붙인다.
 -- 디자이너 인터뷰 글(k-brand-interview)은 원래 내용으로 다시 넣는다(앞서 보낸 SQL을 이미 돌렸어도 되돌아가게).
 -- Supabase 대시보드 > SQL Editor 에 통째로 붙여넣고 Run. 두 번 실행해도 안전하다.
 
@@ -13,7 +13,7 @@ insert into magazines (id,kind,badge,title,hero,editor,date,price,note,summary,i
 이번 호에서는 두 자매 디렉터의 시작과 지금, 그리고 “우리가 입고 싶은 옷”을 만드는 방식을 들여다봐요.','[{"heading": "GLOWNY 글로니 디렉터 & 디자이너", "sub": "최제인 대표 · 최지호 크리에이티브 디렉터", "image": "assets/magazine/glowny-directors.jpg", "body": "글로니의 크리에이티브 디렉터는 최지호(사진 오른쪽). 언니인 최제인(왼쪽) 대표와 함께 2020년 글로니를 론칭한 자매 창업자예요. 역할은 분명해요. 최제인이 비즈니스 전반을 맡는다면, 최지호는 제품 디자인부터 콘텐츠와 비주얼까지 글로니의 크리에이티브 전반을 책임져요.\n\n“언니가 숫자를 보고, 내가 옷을 본다”는 구조가 글로니를 가장 글로니답게 만든 비결. 사랑스럽지만 가볍지 않은, 빈티지하지만 촌스럽지 않은 균형은 두 사람이 매일 부딪히며 만든 결과예요.", "link": "https://glowny.co.kr/story.html", "link_label": "브랜드 스토리 보기"}, {"heading": "OPEN YY 오픈와이와이 디렉터 & 디자이너", "sub": "김지영 · 김보영 자매 디렉터", "image": "assets/magazine/openyy-directors.jpg", "body": "OPEN YY의 크리에이티브 디렉터 역시 자매, 김지영과 김보영이에요. 두 사람은 패션을 전공한 디자이너 출신이라기보다 옷을 좋아하고 오래 관찰해 온 사람들. “우리가 입고 싶고 설레는 옷”을 만들고 싶다는 마음 하나로 브랜드를 시작했어요.\n\n기존에 더오픈프로덕트를 전개하다 2023년 OPEN YY로 이름을 바꾸며 새로운 챕터를 열었고, 지금은 여성복과 유니섹스를 넘나드는 실루엣으로 해외 바이어들이 먼저 찾는 브랜드가 됐어요.", "link": "https://www.instagram.com/openyy_official/", "link_label": "Instagram"}]'::jsonb,'관련 매장 보기','search.html','Instagram에서 보기','',2)
 on conflict (id) do update set kind = excluded.kind, badge = excluded.badge, title = excluded.title, hero = excluded.hero, editor = excluded.editor, date = excluded.date, price = excluded.price, note = excluded.note, summary = excluded.summary, info = excluded.info, intro = excluded.intro, sections = excluded.sections, related_label = excluded.related_label, related_link = excluded.related_link, cta_label = excluded.cta_label, cta_link = excluded.cta_link, sort = excluded.sort;
 
--- 3. 홈 '에디터 큐레이션 피드' 카드 3개(세 번째 카드를 새 글로)
+-- 3. 홈 '에디터 큐레이션 피드' 카드 4개(원래 3개 + 새 글)
 update site_content
-set value = jsonb_set(value, '{feed,items}', '[{"magazine": "k-brand-interview", "color": "blush", "title": "K-BRAND\n디자이너 인터뷰"}, {"magazine": "k-brand-showroom", "color": "beige", "title": "K-BRAND\n쇼룸 소개"}, {"magazine": "k-brand-series-001", "color": "jade", "title": "K-BRAND SERIES 001\nOPEN YY"}]'::jsonb), updated_at = now()
+set value = jsonb_set(value, '{feed,items}', '[{"magazine": "k-brand-interview", "color": "blush", "title": "K-BRAND\n디자이너 인터뷰"}, {"magazine": "k-brand-showroom", "color": "beige", "title": "K-BRAND\n쇼룸 소개"}, {"magazine": "seongsu-daydrop", "color": "jade", "title": "성수 창고 쇼룸에서\n고르는 한국 브랜드"}, {"magazine": "k-brand-series-001", "color": "terracotta", "title": "K-BRAND\nSERIES 001\nOPEN YY"}]'::jsonb), updated_at = now()
 where key = 'home';
