@@ -37,7 +37,7 @@ create policy "write_auth" on magazines for all to authenticated using (true) wi
 
 -- 3. 초기 데이터(앱의 data/magazines.json 그대로)
 
-insert into magazines (id,kind,badge,title,hero,editor,date,price,note,summary,info,intro,sections,related_label,related_link,cta_label,cta_link,sort) values ('seongsu-daydrop','tour','Day Drop','성수 창고 쇼룸에서 고르는 한국 브랜드','assets/photos/seongsu-brick-showroom.jpg','h','6. 12','128,000원~','4인 기준','에디터와 함께 성수 숨은 디자이너 브랜드 스튜디오 5곳을 돌아보는 투어','[{"label": "만나는 시간", "value": "오후 1시"}, {"label": "만나는 장소", "value": "성수역 4번 출구 앞"}, {"label": "소요 시간", "value": "총 5시간(오후 1시~5시)"}, {"label": "인원", "value": "4인 기준"}]'::jsonb,'안녕하세요, 에디터H입니다. 오늘의 Day Drop은 성수예요.
+insert into magazines (id,kind,badge,title,hero,editor,date,price,note,summary,info,intro,sections,related_label,related_link,cta_label,cta_link,sort) values ('seongsu-daydrop','tour','Day Drop','성수 창고 쇼룸에서 고르는 한국 브랜드','assets/photos/seongsu-brick-showroom.jpg','h','6. 12','128,000원부터','4인 기준','에디터와 함께 성수 숨은 디자이너 브랜드 스튜디오 5곳을 돌아보는 투어','[{"label": "만나는 시간", "value": "오후 1시"}, {"label": "만나는 장소", "value": "성수역 4번 출구 앞"}, {"label": "소요 시간", "value": "총 5시간(오후 1시~5시)"}, {"label": "인원", "value": "4인 기준"}]'::jsonb,'안녕하세요, 에디터H입니다. 오늘의 Day Drop은 성수예요.
 성수에는 일본에 매장이 없는 한국 브랜드가 골목마다 숨어 있어요. 검색으론 안 나오고, 와서도 간판이 없어 그냥 지나치기 쉬운 곳들이라 이번엔 저와 함께 반나절 동안 돌아보아요!
 
 🧵 THE HARPER DAY DROP
@@ -46,7 +46,7 @@ insert into magazines (id,kind,badge,title,hero,editor,date,price,note,summary,i
 🤎 일본에서는 살 수 없는 한국 브랜드의 쇼룸과 플래그십
 🤎 에디터가 옆에서 같이 입어 보고, 어울리는지 솔직하게 말해 드려요
 🤎 큰길에 없는, 서울 사람들끼리만 아는 매장 위주
-🤎 ₩128,000~ (4인 기준)
+🤎 128,000원부터 (4인 기준)
 
 이런 분께 권해요
 ✨ 한국 옷은 사고 싶은데 어디서 사야 할지 모르겠는 분
@@ -75,7 +75,7 @@ insert into magazines (id,kind,badge,title,hero,editor,date,price,note,summary,i
 -- 주의: 이미 새 구조인 메인 화면(오늘의 추천에 매거진이 골라져 있는 값)에는 아무 일도 하지 않는다. 줄바꿈 제목은 관리자 메인 화면에서 적는다.
 
 update site_content
-set value = '{"today": {"eyebrow": "오늘의 추천", "magazine": "k-brand-celeb", "title": "셀럽이 입어서\n유명한 브랜드"}, "tours": {"title": "투어 종류", "soonLabel": "추후 공개", "info": {"title": "투어 종류 안내", "note": "DAY DROP부터 예약할 수 있어요. 나머지 투어는 차례로 열립니다."}, "items": [{"tier": "DAY DROP", "title": "3시간 동행 쇼핑 큐레이션", "price": "128,000원~", "open": true, "desc": "에디터와 반나절 동안 성수·한남·압구정의 매장을 함께 돌며 옷을 고르는 단품 큐레이션이에요. 입어 볼 때 옆에서 솔직하게 말해 드려요. 4인 기준 가격입니다."}, {"tier": "CAPSULE", "title": "하루종일 1:1 큐레이션", "price": "", "open": false, "desc": "하루를 통째로 에디터 한 명과 1:1로 다니는 큐레이션이에요. 취향을 미리 듣고 코스를 짭니다."}, {"tier": "SIGNATURE", "title": "1박 헤리티지 투어", "price": "", "open": false, "desc": "1박 2일 동안 서울의 K-패션 뿌리를 따라가는 투어예요. 쇼룸과 공방, 디자이너를 만나는 일정이 들어갑니다."}, {"tier": "BESPOKE", "title": "VIP 맞춤 투어", "price": "", "open": false, "desc": "일정·동선·동행 인원을 처음부터 맞춰 짜는 투어예요. 문의 후 상담으로 정합니다."}]}, "feed": {"title": "에디터 큐레이션 피드", "items": [{"magazine": "k-brand-interview", "color": "blush", "title": "K-BRAND\n디자이너 인터뷰"}, {"magazine": "k-brand-showroom", "color": "beige", "title": "K-BRAND\n쇼룸 소개"}, {"magazine": "seongsu-daydrop", "color": "jade", "title": "성수 창고 쇼룸에서\n고르는 한국 브랜드"}]}, "picks": {"title": "에디터’s PICK", "items": [{"magazine": "seongsu-daydrop"}, {"magazine": "k-brand-celeb"}, {"magazine": "k-brand-interview"}, {"magazine": "k-brand-showroom"}]}}'::jsonb,
+set value = '{"today": {"eyebrow": "오늘의 추천", "magazine": "k-brand-celeb", "title": "셀럽이 입어서\n유명한 브랜드"}, "tours": {"title": "투어 종류", "soonLabel": "추후 공개", "info": {"title": "투어 종류 안내", "note": "DAY DROP부터 예약할 수 있어요. 나머지 투어는 차례로 열립니다."}, "items": [{"tier": "DAY DROP", "title": "3시간 동행 쇼핑 큐레이션", "price": "128,000원부터", "open": true, "desc": "에디터와 반나절 동안 성수·한남·압구정의 매장을 함께 돌며 옷을 고르는 단품 큐레이션이에요. 입어 볼 때 옆에서 솔직하게 말해 드려요. 4인 기준 가격입니다."}, {"tier": "CAPSULE", "title": "하루종일 1:1 큐레이션", "price": "", "open": false, "desc": "하루를 통째로 에디터 한 명과 1:1로 다니는 큐레이션이에요. 취향을 미리 듣고 코스를 짭니다."}, {"tier": "SIGNATURE", "title": "1박 헤리티지 투어", "price": "", "open": false, "desc": "1박 2일 동안 서울의 K-패션 뿌리를 따라가는 투어예요. 쇼룸과 공방, 디자이너를 만나는 일정이 들어갑니다."}, {"tier": "BESPOKE", "title": "VIP 맞춤 투어", "price": "", "open": false, "desc": "일정·동선·동행 인원을 처음부터 맞춰 짜는 투어예요. 문의 후 상담으로 정합니다."}]}, "feed": {"title": "에디터 큐레이션 피드", "items": [{"magazine": "k-brand-interview", "color": "blush", "title": "K-BRAND\n디자이너 인터뷰"}, {"magazine": "k-brand-showroom", "color": "beige", "title": "K-BRAND\n쇼룸 소개"}, {"magazine": "seongsu-daydrop", "color": "jade", "title": "성수 창고 쇼룸에서\n고르는 한국 브랜드"}]}, "picks": {"title": "에디터’s PICK", "items": [{"magazine": "seongsu-daydrop"}, {"magazine": "k-brand-celeb"}, {"magazine": "k-brand-interview"}, {"magazine": "k-brand-showroom"}]}}'::jsonb,
   updated_at = now()
 where key = 'home' and coalesce(value->'today'->>'magazine', '') = ''; -- 아직 옛 구조(제목·사진 직접 입력)일 때만 바꾼다. 관리자에서 고친 새 값은 덮지 않는다
 

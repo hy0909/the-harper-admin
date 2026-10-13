@@ -226,7 +226,7 @@ App.screens.magazines = {
       fieldImage('대표 사진', m, 'hero', { required: true, slug: () => 'mag-' + (m.id || slugify(m.title)) }),
       h('div', { class: 'grid3' },
         fieldText('날짜 표시', m, 'date', { placeholder: '10. 12', hint: '적은 그대로 보입니다.' }),
-        fieldText('가격', m, 'price', { placeholder: '128,000원~' }),
+        fieldText('가격', m, 'price', { placeholder: '128,000원부터' }),
         fieldText('가격 부가 설명', m, 'note', { placeholder: '4인 기준' })),
       fieldText('한 줄 요약', m, 'summary', { textarea: true, rows: 2, placeholder: '에디터와 함께 성수 숨은 디자이너 브랜드 스튜디오 5곳을 돌아보는 투어' }),
       h('div', { class: 'field' },

@@ -33,7 +33,7 @@ create policy "write_auth" on magazines for all to authenticated using (true) wi
 
 -- 3. 초기 데이터(앱의 data/magazines.json 그대로)
 
-insert into magazines (id,kind,badge,title,hero,editor,date,price,note,summary,info,intro,sections,related_label,related_link,cta_label,cta_link,sort) values ('seongsu-daydrop','tour','Day Drop','성수 창고 쇼룸에서 고르는 한국 브랜드','assets/photos/seongsu-brick-showroom.jpg','h','6. 12','128,000원~','4인 기준','에디터와 함께 성수 숨은 디자이너 브랜드 스튜디오 5곳을 돌아보는 투어','[{"label": "만나는 시간", "value": "오후 1시"}, {"label": "만나는 장소", "value": "성수역 4번 출구 앞"}, {"label": "소요 시간", "value": "총 5시간(오후 1시~5시)"}, {"label": "인원", "value": "4인 기준"}]'::jsonb,'안녕하세요, 에디터H입니다. 오늘의 Day Drop은 성수예요.
+insert into magazines (id,kind,badge,title,hero,editor,date,price,note,summary,info,intro,sections,related_label,related_link,cta_label,cta_link,sort) values ('seongsu-daydrop','tour','Day Drop','성수 창고 쇼룸에서 고르는 한국 브랜드','assets/photos/seongsu-brick-showroom.jpg','h','6. 12','128,000원부터','4인 기준','에디터와 함께 성수 숨은 디자이너 브랜드 스튜디오 5곳을 돌아보는 투어','[{"label": "만나는 시간", "value": "오후 1시"}, {"label": "만나는 장소", "value": "성수역 4번 출구 앞"}, {"label": "소요 시간", "value": "총 5시간(오후 1시~5시)"}, {"label": "인원", "value": "4인 기준"}]'::jsonb,'안녕하세요, 에디터H입니다. 오늘의 Day Drop은 성수예요.
 성수에는 일본에 매장이 없는 한국 브랜드가 골목마다 숨어 있어요. 검색으론 안 나오고, 와서도 간판이 없어 그냥 지나치기 쉬운 곳들이라 이번엔 저와 함께 반나절 동안 돌아보아요!
 
 🧵 THE HARPER DAY DROP
@@ -42,7 +42,7 @@ insert into magazines (id,kind,badge,title,hero,editor,date,price,note,summary,i
 🤎 일본에서는 살 수 없는 한국 브랜드의 쇼룸과 플래그십
 🤎 에디터가 옆에서 같이 입어 보고, 어울리는지 솔직하게 말해 드려요
 🤎 큰길에 없는, 서울 사람들끼리만 아는 매장 위주
-🤎 ₩128,000~ (4인 기준)
+🤎 128,000원부터 (4인 기준)
 
 이런 분께 권해요
 ✨ 한국 옷은 사고 싶은데 어디서 사야 할지 모르겠는 분

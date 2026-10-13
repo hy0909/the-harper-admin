@@ -200,7 +200,7 @@ App.screens.home = {
           h('div', { class: 'grid3' },
             fieldText('등급 이름', it, 'tier', { required: true, placeholder: 'DAY DROP' }),
             fieldText('제목', it, 'title', { required: true, placeholder: '3시간 동행 쇼핑 큐레이션' }),
-            fieldText('가격', it, 'price', { placeholder: '128,000원~' })),
+            fieldText('가격', it, 'price', { placeholder: '128,000원부터' })),
           fieldText('설명', it, 'desc', { textarea: true, rows: 3, placeholder: '투어가 어떤 것인지 두세 문장으로 적어 주세요.' }),
           fieldToggle('지금 예약 가능 (끄면 "추후 확장"으로 표시)', it, 'open')));
       });
