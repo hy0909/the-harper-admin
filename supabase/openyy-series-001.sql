@@ -1,0 +1,19 @@
+-- THE HARPER: K-BRAND SERIES 001 오픈와이와이 매거진(2026-10-13, hy0909)
+-- 인스타그램 콘텐츠의 사진과 글로 k-brand-interview 글을 바꾸고, 홈 피드 카드 제목도 맞춘다.
+-- Supabase 대시보드 > SQL Editor 에 통째로 붙여넣고 Run. 두 번 실행해도 안전하다.
+
+-- 1. 매거진 글
+insert into magazines (id,kind,badge,title,hero,editor,date,price,note,summary,info,intro,sections,related_label,related_link,cta_label,cta_link,sort) values ('k-brand-interview','magazine','K-BRAND','K-BRAND SERIES 001 오픈와이와이','assets/magazine/openyy-cover.jpg','h','10. 13','','','두 자매의 서로 다른 취향으로 일상적인 옷에 신선한 변주를 더하는 서울 브랜드','[]'::jsonb,'THE HARPER K-BRAND SERIES의 첫 번째 브랜드는 오픈와이와이(OPEN YY)예요. 표지 문구 그대로 NOT YOUR ORDINARY, 익숙한 옷을 평범하지 않게 만드는 서울 브랜드예요.
+
+두 자매가 브랜드를 시작한 이야기부터 이름에 담긴 뜻, 이번 시즌 컬렉션, 한남동 플래그십 스토어까지 여덟 가지로 나눠 소개해요.','[{"heading": "01. 두 자매의 취향이 담긴 브랜드", "sub": "", "image": "assets/magazine/openyy-01-sisters.jpg", "body": "오픈와이와이는 지영과 보영, 두 자매가 2020년 론칭한 서울 기반의 컨템포러리 브랜드다. ''더오픈 프로덕트(THEOPEN PRODUCT)''라는 이름으로 시작해 지금의 오픈와이와이로 거듭났다. 서로 다른 취향과 개성을 바탕으로 일상적인 옷에 신선한 변주를 더한다.", "link": "", "link_label": ""}, {"heading": "02. OPEN YY, 이름에 담긴 의미", "sub": "", "image": "assets/magazine/openyy-02-name.jpg", "body": "브랜드명 속 ''YY''는 두 자매의 이름에 공통으로 들어가는 ''영(YOUNG)''에서 따왔다. 각각 ''밝음''과 ''꽃봉오리''라는 서로 다른 뜻을 지닌다. 닮은 듯 다른 두 자매처럼, 오픈와이와이가 추구하는 개성과 다양성을 상징한다.", "link": "", "link_label": ""}, {"heading": "03. 익숙한 옷을 낯설게 만드는 방법", "sub": "", "image": "assets/magazine/openyy-03-familiar.jpg", "body": "오픈와이와이는 익숙한 옷에 예상 밖의 디테일과 독특한 비율을 더한다. 스웨트셔츠부터 니트, 재킷까지 일상적인 아이템을 새롭게 해석하며, 여성복과 유니섹스의 경계를 넘나드는 자유로운 스타일을 제안한다.", "link": "", "link_label": ""}, {"heading": "04. 셀럽들의 옷장에서 발견한 이름", "sub": "", "image": "assets/magazine/openyy-04-celeb.jpg", "body": "K 아티스트들의 옷차림에서도 오픈와이와이를 발견할 수 있다. 무대 위 화려한 스타일링부터 일상적인 사복 패션까지, 셀럽들의 선택을 받으며 해외에서도 주목받고 있다.", "link": "", "link_label": ""}, {"heading": "05. 서울을 옷으로 표현한다면?", "sub": "", "image": "assets/magazine/openyy-05-seoul.jpg", "body": "2026 F/W 컬렉션 ''WHEN IN SEOUL''은 서울의 다채로운 풍경에서 출발한다. 과거와 현재, 격식과 자유로움이 공존하는 도시의 모습을 옷으로 풀어냈다. 콘크리트를 닮은 회색과 블랙, 차분한 뉴트럴 컬러에 선명한 네온 컬러를 더해 서울의 역동적인 분위기를 표현한다.", "link": "", "link_label": ""}, {"heading": "06. 이번 시즌 눈여겨볼 디테일", "sub": "", "image": "assets/magazine/openyy-06-details.jpg", "body": "유연한 실루엣의 카고 봄버 재킷과 핀턱 트렌치코트, 자연스럽게 흐르는 니트웨어가 주를 이룬다. 여기에 와이어 장식의 비니와 롱부츠 등 개성 있는 액세서리를 더했다. 힘을 뺀 실루엣과 섬세한 디테일을 통해 자유로운 스타일링을 제안한다.", "link": "", "link_label": ""}, {"heading": "07. 와이와이를 직접 만나고 싶다면", "sub": "서울 용산구 이태원로36길 16 1F", "image": "assets/magazine/openyy-07-store.jpg", "body": "서울 한남동에 자리한 오픈와이와이 플래그십 스토어에서는 최신 컬렉션과 브랜드의 감각을 담은 공간을 경험할 수 있다. 스페셜티 커피를 즐길 수 있는 카페도 마련되어 있어 쇼핑과 휴식을 함께 누리기 좋다.", "link": "", "link_label": ""}, {"heading": "08. 지금 꼭 기억해야 할 K-브랜드", "sub": "", "image": "assets/magazine/openyy-08-remember.jpg", "body": "옷은 자신만의 취향을 드러내는 가장 쉬운 방법이다. 두 자매의 서로 다른 감각에서 출발해 서울의 오늘을 담아내는 오픈와이와이. 지금 기억해야 할 K-패션 브랜드다.", "link": "", "link_label": ""}]'::jsonb,'관련 매장 보기','search.html','Instagram에서 보기','',2)
+on conflict (id) do update set kind = excluded.kind, badge = excluded.badge, title = excluded.title, hero = excluded.hero, editor = excluded.editor, date = excluded.date, price = excluded.price, note = excluded.note, summary = excluded.summary, info = excluded.info, intro = excluded.intro, sections = excluded.sections, related_label = excluded.related_label, related_link = excluded.related_link, cta_label = excluded.cta_label, cta_link = excluded.cta_link, sort = excluded.sort;
+
+-- 2. 홈 '에디터 큐레이션 피드' 카드 제목
+update site_content
+set value = jsonb_set(value, '{feed,items}', (
+  select jsonb_agg(case when it->>'magazine' = 'k-brand-interview'
+                        then jsonb_set(it, '{title}', to_jsonb('K-BRAND SERIES 001' || chr(10) || '오픈와이와이'))
+                        else it end order by ord)
+  from jsonb_array_elements(value->'feed'->'items') with ordinality as t(it, ord)
+)), updated_at = now()
+where key = 'home';
