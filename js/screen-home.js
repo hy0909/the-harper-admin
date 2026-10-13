@@ -211,7 +211,7 @@ App.screens.home = {
         h('button', { class: 'btn small', type: 'button', onclick: () => { tours.items.push({ tier: '', title: '', price: '', open: false, desc: '' }); markDirty('content'); drawTours(); } }, '+ 투어 추가')),
       h('div', { class: 'grid2' },
         fieldText('섹션 제목', tours, 'title', { placeholder: '투어 종류' }),
-        fieldText('준비 중 표시 글자', tours, 'soonLabel', { placeholder: '오픈 예정' })),
+        fieldText('준비 중 표시 글자', tours, 'soonLabel', { placeholder: '추후 공개' })),
       h('div', { class: 'grid2' },
         fieldText('안내 창 제목', tours.info, 'title', { placeholder: '투어 종류 안내' })),
       tourList));
