@@ -20,7 +20,7 @@ on conflict (id) do update set kind = excluded.kind, badge = excluded.badge, tit
 
 -- 3. 홈 '에디터 큐레이션 피드' 카드 4개(원래 3개 + 새 글)
 update site_content
-set value = jsonb_set(value, '{feed,items}', '[{"magazine": "k-brand-interview", "color": "blush", "title": "K-BRAND\n디자이너 인터뷰"}, {"magazine": "k-brand-showroom", "color": "beige", "title": "K-BRAND\n쇼룸 소개"}, {"magazine": "seongsu-daydrop", "color": "jade", "title": "성수 창고 쇼룸에서\n고르는 한국 브랜드"}, {"magazine": "k-brand-series-001", "color": "terracotta", "title": "K-BRAND\nSERIES 001\nOPEN YY"}]'::jsonb), updated_at = now()
+set value = jsonb_set(value, '{feed,items}', '[{"magazine": "k-brand-interview", "color": "blush", "title": "K-BRAND\n디자이너 인터뷰"}, {"magazine": "k-brand-showroom", "color": "beige", "title": "K-BRAND\n쇼룸 소개"}, {"magazine": "seongsu-daydrop", "color": "jade", "title": "K-BRAND 소개\n모델이 유명한 브랜드"}, {"magazine": "k-brand-series-001", "color": "terracotta", "title": "K-BRAND\nSERIES 001\nOPEN YY"}]'::jsonb), updated_at = now()
 where key = 'home';
 
 -- THE HARPER: '셀럽이 입어서 유명한 브랜드' 글에서 오픈와이와이를 맨 위로(2026-10-13, hy0909)
