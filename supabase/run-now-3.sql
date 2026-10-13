@@ -1,5 +1,5 @@
 -- THE HARPER: 2026-10-13 하루치 SQL 모음(hy0909). Supabase SQL Editor 에 통째로 붙여넣고 Run. 두 번 실행해도 안전하다.
--- 아래 세 파일을 차례로 이어 붙였다: openyy-series-001.sql, celeb-openyy-first.sql, tour-soon-label.sql
+-- 아래 네 파일을 차례로 이어 붙였다: openyy-series-001.sql, celeb-openyy-first.sql, tour-soon-label.sql, magazine-title-lines.sql
 
 -- THE HARPER: K-BRAND SERIES 001 OPEN YY 매거진 새 글(2026-10-13, hy0909)
 -- 인스타그램 콘텐츠의 사진과 글로 새 글(k-brand-series-001)을 넣고, 홈 피드 맨 뒤에 이 글 카드를 하나 더 붙인다.
@@ -38,3 +38,11 @@ where id = 'k-brand-celeb'
 update site_content
 set value = jsonb_set(value, '{tours,soonLabel}', '"추후 공개"'::jsonb), updated_at = now()
 where key = 'home';
+
+-- THE HARPER: 매거진 제목에 홈 카드와 같은 줄바꿈 넣기(2026-10-13, hy0909)
+-- 상세 화면 제목이 카드처럼 두 줄로 나온다. Supabase SQL Editor 에 붙여넣고 Run. 두 번 실행해도 안전하다.
+update magazines set title = '셀럽이 입어서' || chr(10) || '유명한 브랜드' where id = 'k-brand-celeb';
+update magazines set title = 'K-BRAND' || chr(10) || '디자이너 인터뷰' where id = 'k-brand-interview';
+update magazines set title = 'K-BRAND' || chr(10) || '쇼룸 소개' where id = 'k-brand-showroom';
+update magazines set title = '성수 창고 쇼룸에서' || chr(10) || '고르는 한국 브랜드' where id = 'seongsu-daydrop';
+update magazines set title = 'K-BRAND' || chr(10) || 'SERIES 001' || chr(10) || 'OPEN YY' where id = 'k-brand-series-001';
