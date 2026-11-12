@@ -108,8 +108,8 @@ async function uploadImage(file, slugHint) {
 function fieldImage(label, obj, key, opt = {}) {
   const file = UI.file;
   const thumb = h('div', { class: 'thumb' + (opt.round ? ' round' : '') });
-  const pathInput = h('input', { type: 'text', value: obj[key] ?? '', placeholder: 'https://… 또는 assets/photos/…', spellcheck: 'false',
-    oninput: (e) => { obj[key] = e.target.value.trim(); markDirty(file); refresh(); opt.onChange && opt.onChange(obj[key]); } });
+  const pathInput = h('input', { type: 'text', value: DB.shortImage(obj[key]), placeholder: 'https://… 또는 assets/photos/…', spellcheck: 'false',
+    oninput: (e) => { obj[key] = DB.fullImage(e.target.value); markDirty(file); refresh(); opt.onChange && opt.onChange(obj[key]); } });
   const prog = h('span', { class: 'prog' });
   const fileInput = h('input', { type: 'file', accept: 'image/*', class: 'hidden' });
   const btn = h('button', { type: 'button', class: 'btn small', onclick: () => fileInput.click() }, obj[key] ? '사진 바꾸기' : '사진 올리기');
@@ -129,7 +129,7 @@ function fieldImage(label, obj, key, opt = {}) {
     try {
       const saved = await uploadImage(f, typeof opt.slug === 'function' ? opt.slug() : opt.slug);
       obj[key] = saved;
-      pathInput.value = saved;
+      pathInput.value = DB.shortImage(saved);
       markDirty(file);
       refresh();
       opt.onChange && opt.onChange(saved);

@@ -45,7 +45,7 @@ App.screens.shops = {
     const addBtn = h('button', { class: 'btn', type: 'button', onclick: () => {
       const id = data.shops.reduce((m, s) => Math.max(m, Number(s.id) || 0), -1) + 1;
       const areaKeys = Object.keys(data.areas || {});
-      if (!areaKeys.length) { toast('지역(areas)이 하나도 없습니다. Supabase에서 먼저 지역을 넣어 주세요.', 'err'); return; }
+      if (!areaKeys.length) { toast('지역이 하나도 없습니다. 개발 담당자에게 지역 추가를 요청해 주세요.', 'err'); return; }
       const area = areaKeys[0];
       const center = data.areas[area];
       data.shops.push({ id, tier: 1, area, areaName: self.areaName(data, area), name: '', addr: '', lat: center.lat || 37.5445, lng: center.lng || 127.0560, pick: false, photo: '', note: '', intro: [] });

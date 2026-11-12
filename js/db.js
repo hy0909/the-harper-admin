@@ -9,7 +9,7 @@ const DB = {
     const cfg = window.HARPER_SUPABASE || {};
     if (!cfg.url || !cfg.anonKey) return null;
     if (!window.supabase || !window.supabase.createClient) {
-      throw new Error('supabase-js를 불러오지 못했습니다. 네트워크 연결을 확인하세요.');
+      throw new Error('관리자 화면을 불러오지 못했습니다. 네트워크 연결을 확인하세요.');
     }
     this.client = window.supabase.createClient(cfg.url, cfg.anonKey);
     return this.client;
@@ -200,6 +200,21 @@ const DB = {
     throw new Error('같은 이름의 파일이 너무 많습니다. 파일 이름을 바꿔 주세요.');
   },
 
+  // 사진 칸에 보이는 글자: 사진 저장소 주소는 앞부분을 떼고 uploads/… 만 보여 준다(화면에 서버 주소가 안 보이게)
+  storagePrefix() {
+    const cfg = window.HARPER_SUPABASE || {};
+    return cfg.url ? `${cfg.url.replace(/\/+$/, '')}/storage/v1/object/public/${this.BUCKET}/` : '';
+  },
+  shortImage(v) {
+    const pre = this.storagePrefix(), s = String(v ?? '');
+    return pre && s.startsWith(pre) ? s.slice(pre.length) : s;
+  },
+  // 칸에 적은 글자를 저장할 값으로: uploads/… 는 사진 저장소 전체 주소로 되돌린다
+  fullImage(v) {
+    const s = String(v ?? '').trim();
+    return s.startsWith('uploads/') && this.storagePrefix() ? this.storagePrefix() + s : s;
+  },
+
   // 미리보기 주소: 전체 주소면 그대로, 아니면 앱에 있는 옛 경로
   imageUrl(path) {
     if (!path) return '';
@@ -219,14 +234,16 @@ const DB = {
     if (/Email not confirmed/i.test(m)) return '아직 확인되지 않은 이메일입니다. 관리자에게 문의하세요.';
     if (/rate limit|too many/i.test(m)) return '시도가 너무 많습니다. 잠시 뒤 다시 해 주세요.';
     if (/Failed to fetch|NetworkError|Load failed|network/i.test(m) || e.name === 'TypeError') return '네트워크 연결을 확인하세요.';
-    if (/Invalid API key|apikey/i.test(m)) return 'anon 키가 올바르지 않습니다. js/config.js를 확인하세요.';
+    if (/Invalid API key|apikey/i.test(m)) return '서버 설정이 올바르지 않습니다. 개발 담당자에게 알려 주세요.';
     if (this.isAuthError(e)) return '로그인이 만료되었습니다. 다시 로그인해 주세요.';
     if (e.code === '42501' || /row-level security|violates row-level/i.test(m)) return '쓰기 권한이 없습니다. 로그인 상태를 확인하세요.';
     if (e.code === '23503' || /foreign key/i.test(m)) return '없는 지역을 가리키고 있습니다. 지역을 다시 골라 주세요.';
     if (e.code === '23505' || /duplicate key/i.test(m)) return '같은 id가 이미 있습니다. 다른 id를 적어 주세요.';
-    if (e.code === '42P01' || /relation .* does not exist|Could not find the table/i.test(m)) return '테이블이 없습니다. supabase/ 안의 SQL을 먼저 실행해 주세요.';
-    if (/Bucket not found/i.test(m)) return '사진 버킷(images)이 없습니다. supabase/schema.sql을 먼저 실행해 주세요.';
+    if (e.code === '42P01' || /relation .* does not exist|Could not find the table/i.test(m)) return '저장할 곳이 아직 준비되지 않았습니다. 개발 담당자에게 알려 주세요.';
+    if (/Bucket not found/i.test(m)) return '사진 저장소가 아직 준비되지 않았습니다. 개발 담당자에게 알려 주세요.';
     if (/Payload too large|exceeded the maximum allowed size/i.test(m)) return '사진이 너무 큽니다.';
+    // 그 밖의 오류 글에 서버 이름이 들어 있으면 화면에는 일반 문구만 보여 준다
+    if (/supa/i.test(m)) return '서버에서 오류가 났습니다. 잠시 뒤 다시 해 주세요.';
     return m || '알 수 없는 오류';
   },
 };
