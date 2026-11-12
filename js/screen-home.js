@@ -8,6 +8,7 @@ const COLORS = [
 
 // 줄바꿈 제목 칸 안내 글
 const TITLE_HINT = '비우면 매거진 제목 그대로. 줄을 바꾸면 앱에서도 그 자리에서 줄이 바뀝니다. 글자는 매거진 제목과 같아야 합니다';
+const FEED_TITLE_HINT = '비우면 매거진 제목 그대로. 카드에만 보이는 제목이라 매거진 제목과 달라도 됩니다. 줄을 바꾸면 앱에서도 그 자리에서 줄이 바뀝니다';
 
 // 옛 구조의 링크 "magazine.html?id=xxx" 에서 매거진 id만 꺼낸다
 function magIdFromLink(link) {
@@ -80,7 +81,7 @@ App.screens.home = {
     });
     hm.feed.items.forEach((it, i) => {
       if (!okMag(it.magazine)) errors.push(`큐레이션 피드 ${i + 1}번: 매거진을 골라 주세요.`);
-      checkTitle(it, `큐레이션 피드 ${i + 1}번`);
+      // 피드 카드 제목은 매거진 제목과 달라도 된다(카드에만 따로 쓰는 제목)
       if (!COLORS.some((cc) => cc.id === it.color)) errors.push(`큐레이션 피드 ${i + 1}번: 카드 색을 골라 주세요.`);
     });
     hm.picks.items.forEach((it, i) => {
@@ -225,7 +226,7 @@ App.screens.home = {
       feed.items.forEach((it, i) => {
         const pv = self.preview(() => self.viewOf(it, mags), content, 'feed');
         const redraw = () => pv.firstChild.redraw();
-        const itemTitle = fieldText('줄바꿈 제목', it, 'title', { textarea: true, rows: 2, hint: TITLE_HINT, onChange: redraw });
+        const itemTitle = fieldText('카드 제목', it, 'title', { textarea: true, rows: 2, hint: FEED_TITLE_HINT, onChange: redraw });
         feedList.append(h('div', { class: 'card sub' },
           h('div', { class: 'card-head' }, h('h3', null, h('span', { class: 'idx' }, i + 1), self.viewOf(it, mags).title.replace(/\n/g, ' ')), orderButtons(feed.items, i, drawFeed)),
           h('div', { class: 'item-row' },
