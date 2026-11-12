@@ -22,11 +22,13 @@ h3{font-size:15px;font-weight:600;margin:0}
 /* 로그인 */
 .login{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px 16px}
 .login-card{width:100%;max-width:440px;background:var(--ground);border-radius:16px;padding:32px 28px;box-shadow:0 10px 40px rgba(58,54,47,.08)}
-.login-card .brand{margin-bottom:8px}
+.login-card .brand{margin-bottom:34px}
+/* 로그인 칸 사이 간격: 기본 14px에 20px 더함. 오류 문구는 비밀번호 바로 아래에 붙임 */
+#login-form .field{margin-bottom:34px}
+#login-form .error{margin:-20px 0 20px}
 .brand{font-weight:800;letter-spacing:.04em;font-size:18px}
 .brand span{font-weight:500;color:var(--ink-60);letter-spacing:0;margin-left:6px}
 .brand.small{font-size:15px}
-.login-hint{margin:18px 0 0;border-top:1px solid var(--line);padding-top:14px}
 
 /* 공통 입력 */
 .field{display:block;margin:0 0 14px}
